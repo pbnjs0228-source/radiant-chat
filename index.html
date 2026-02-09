@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>RADIANT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-body: #020617;
+      --bg-panel: rgba(15,23,42,0.9);
+      --border: rgba(148,163,184,0.35);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --accent: #ec4899;
+      --accent2: #6366f1;
+      --accent3: #f97316;
+
+      --grad1: #f97316;
+      --grad2: #ec4899;
+      --grad3: #6366f1;
+
+      --btn-bg: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+      --btn-text: #020617;
+      --btn-border: var(--border);
+      --chip-bg: rgba(15,23,42,0.9);
+      --chip-border: rgba(148,163,184,0.5);
+    }
+
+    :root[data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-panel: #ffffff;
+      --border: rgba(0,0,0,0.1);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --accent: #fb923c;
+      --accent2: #6366f1;
+      --accent3: #ec4899;
+
+      --btn-bg: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+      --btn-text: #020617;
+      --btn-border: rgba(0,0,0,0.2);
+      --chip-bg: #e5e7eb;
+      --chip-border: rgba(0,0,0,0.15);
+    }
+
+    :root[data-theme="dark"] {
+      --bg-body: #0f172a;
+      --bg-panel: #1e293b;
+      --border: rgba(148,163,184,0.25);
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #ec4899;
+      --accent2: #6366f1;
+      --accent3: #f97316;
+
+      --btn-bg: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+      --btn-text: #020617;
+      --btn-border: rgba(148,163,184,0.5);
+      --chip-bg: rgba(15,23,42,0.95);
+      --chip-border: rgba(148,163,184,0.6);
+    }
+
+    :root[data-theme="midnight"] {
+      --bg-body: #00010a;
+      --bg-panel: #0a0f1f;
+      --border: rgba(99,102,241,0.4);
+      --text-main: #e2e8f0;
+      --text-muted: #64748b;
+      --accent: #6366f1;
+      --accent2: #ec4899;
+      --accent3: #22c55e;
+
+      --btn-bg: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+      --btn-text: #020617;
+      --btn-border: rgba(99,102,241,0.6);
+      --chip-bg: rgba(15,23,42,0.95);
+      --chip-border: rgba(99,102,241,0.6);
+    }
+
+    :root[data-theme="bloom"] {
+      --bg-body: #fdf2f8;
+      --bg-panel: #ffe4f1;
+      --border: rgba(236,72,153,0.4);
+      --text-main: #831843;
+      --text-muted: #be185d;
+      --accent: #ec4899;
+      --accent2: #f472b6;
+      --accent3: #fb7185;
+
+      --btn-bg: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+      --btn-text: #fdf2f8;
+      --btn-border: rgba(236,72,153,0.7);
+      --chip-bg: #fce7f3;
+      --chip-border: rgba(236,72,153,0.6);
+    }
+
+    :root[data-theme="orange"] {
+      --bg-body: #1a0f00;
+      --bg-panel: #2a1a00;
+      --border: rgba(255,122,0,0.4);
+      --text-main: #fff7ed;
+      --text-muted: #fed7aa;
+      --accent: #ff7a00;
+      --accent2: #fb923c;
+      --accent3: #f97316;
+
+      --btn-bg: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2));
+      --btn-text: #1a0f00;
+      --btn-border: rgba(255,122,0,0.7);
+      --chip-bg: #3b1f00;
+      --chip-border: rgba(255,122,0,0.6);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .glow-orbit {
+      position: fixed;
+      inset: -20%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(249,115,22,0.18), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(236,72,153,0.18), transparent 55%),
+        radial-gradient(circle at 0% 80%, rgba(56,189,248,0.16), transparent 55%),
+        radial-gradient(circle at 100% 80%, rgba(129,140,248,0.16), transparent 55%);
+      filter: blur(2px);
+      z-index: -2;
+    }
+
+    .glass-shell {
+      width: 100%;
+      max-width: 1180px;
+      height: 88vh;
+      background: rgba(15,23,42,0.88);
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      box-shadow:
+        0 30px 80px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(15,23,42,0.9);
+      overflow: hidden;
+      display: flex;
+      position: relative;
+    }
+
+    .hidden { display: none !important; }
+
+    .auth-shell {
+      width: 420px;
+      max-width: 100%;
+      background: var(--bg-panel);
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      padding: 26px 24px 22px;
+      box-shadow:
+        0 26px 70px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(15,23,42,0.9);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .logo-text {
+      font-size: 26px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2), #22c55e);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .auth-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .auth-toggle {
+      display: flex;
+      margin-bottom: 18px;
+      background: var(--chip-bg);
+      border-radius: 999px;
+      padding: 3px;
+      border: 1px solid var(--chip-border);
+    }
+    .auth-toggle button {
+      flex: 1;
+      border-radius: 999px;
+      border: none;
+      padding: 7px 0;
+      font-size: 13px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.18s ease;
+    }
+    .auth-toggle button.active {
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-weight: 600;
+      box-shadow: 0 0 18px rgba(236,72,153,0.7);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .field-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+    .auth-form input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: var(--bg-body);
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .auth-form input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(236,72,153,0.7);
+      background: var(--bg-body);
+    }
+    .auth-submit {
+      margin-top: 6px;
+      padding: 9px 0;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      box-shadow: 0 0 22px rgba(236,72,153,0.7);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+    .auth-submit:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 0 26px rgba(236,72,153,0.9);
+    }
+    .auth-error {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #f97373;
+      min-height: 16px;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--bg-panel);
+      border-right: 1px solid rgba(30,64,175,0.7);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid rgba(30,64,175,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sidebar-logo {
+      font-size: 16px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--accent3), var(--accent), var(--accent2), #22c55e);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+    .sidebar-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      padding: 10px 14px 4px;
+    }
+    .channel-list {
+      padding: 4px 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      margin: 0 4px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .channel-item.active {
+      background: rgba(37,99,235,0.2);
+      color: var(--text-main);
+    }
+    .channel-hash {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .user-panel {
+      margin-top: auto;
+      padding: 8px 10px;
+      border-top: 1px solid rgba(30,64,175,0.7);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-avatar {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      overflow: hidden;
+      background: radial-gradient(circle at top, var(--grad1), var(--grad2), var(--grad3));
+    }
+
+    .status-dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 2px solid #020617;
+      bottom: 1px;
+      right: 1px;
+      background: #6b7280;
+    }
+    .status-online { background: #22c55e; }
+    .status-away { background: #eab308; }
+    .status-offline { background: #6b7280; }
+
+    .user-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .user-name {
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .user-status {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .user-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .user-actions button {
+      border: 1px solid var(--btn-border);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      background: var(--chip-bg);
+      color: var(--text-main);
+      transition: background 0.12s ease, color 0.12s ease, border 0.12s ease, box-shadow 0.12s ease;
+    }
+    .user-actions button:hover {
+      background: rgba(248,250,252,0.1);
+      border-color: var(--accent);
+      color: #f9fafb;
+      box-shadow: 0 0 10px rgba(236,72,153,0.6);
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-body);
+    }
+    .main-header {
+      height: 48px;
+      border-bottom: 1px solid rgba(30,64,175,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+    }
+    .channel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .channel-title span.hash {
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+    .channel-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .header-user {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .main-body {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+
+    .chat-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 10px 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      scroll-behavior: smooth;
+    }
+    .message {
+      display: flex;
+      gap: 8px;
+      font-size: 13px;
+      position: relative;
+    }
+    .message-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+      background: #020617;
+    }
+    .message-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .message-header {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      position: relative;
+    }
+    .message-username {
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .message-timestamp {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .message-text {
+      font-size: 13px;
+      color: var(--text-main);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .reply-btn {
+      margin-left: auto;
+      font-size: 11px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      opacity: 0;
+      padding: 0 4px;
+      transition: opacity 0.12s ease, color 0.12s ease;
+    }
+    .message:hover .reply-btn {
+      opacity: 1;
+    }
+    .reply-btn:hover {
+      color: var(--accent);
+    }
+
+    .admin-delete-btn {
+      font-size: 11px;
+      border: none;
+      background: transparent;
+      color: #f97373;
+      cursor: pointer;
+      opacity: 0;
+      padding: 0 4px;
+      margin-left: 4px;
+      transition: opacity 0.12s ease, color 0.12s ease;
+    }
+    .message:hover .admin-delete-btn {
+      opacity: 1;
+    }
+    .admin-delete-btn:hover {
+      color: #fecaca;
+    }
+
+    .reply-preview {
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .reply-preview-bar {
+      width: 4px;
+      border-radius: 999px;
+      margin-right: 6px;
+      align-self: stretch;
+      background: linear-gradient(180deg, #f97316, #ec4899, #6366f1);
+    }
+    .reply-preview-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .reply-preview-text strong {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .input-bar {
+      border-top: 1px solid rgba(30,64,175,0.7);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--bg-panel);
+    }
+
+    .reply-bar {
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .reply-bar-inner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--chip-bg);
+      border-radius: 10px;
+      border: 1px solid var(--chip-border);
+      padding: 4px 8px;
+      max-width: 100%;
+    }
+    .reply-bar-gradient {
+      width: 4px;
+      border-radius: 999px;
+      align-self: stretch;
+      background: linear-gradient(180deg, #f97316, #ec4899, #6366f1);
+    }
+    .reply-bar-text {
+      flex: 1;
+      overflow: hidden;
+    }
+    .reply-bar-title {
+      font-size: 11px;
+      color: var(--text-main);
+      margin-bottom: 1px;
+    }
+    .reply-bar-snippet {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .reply-bar-cancel {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0 4px;
+    }
+    .reply-bar-cancel:hover {
+      color: var(--accent);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      background: var(--chip-bg);
+      border-radius: 999px;
+      border: 1px solid var(--chip-border);
+      display: flex;
+      align-items: center;
+      padding: 4px 10px;
+      gap: 8px;
+    }
+    .input-wrapper input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+    }
+    .send-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-weight: 600;
+      box-shadow: 0 0 18px rgba(236,72,153,0.7);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+    .send-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 0 22px rgba(236,72,153,0.9);
+    }
+
+    .userlist-column {
+      width: 220px;
+      border-left: 1px solid rgba(30,64,175,0.7);
+      background: var(--bg-panel);
+      display: flex;
+      flex-direction: column;
+    }
+    .userlist-header {
+      padding: 8px 10px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(30,64,175,0.7);
+    }
+    .userlist {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .userlist-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-main);
+      cursor: default;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .userlist-item:hover {
+      background: rgba(37,99,235,0.2);
+    }
+    .userlist-avatar-wrap {
+      position: relative;
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .userlist-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      background: #020617;
+    }
+    .userlist-status-dot {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      border: 2px solid #020617;
+      bottom: -1px;
+      right: -1px;
+      background: #6b7280;
+    }
+    .userlist-status-dot.status-online { background: #22c55e; }
+    .userlist-status-dot.status-away { background: #eab308; }
+    .userlist-status-dot.status-offline { background: #6b7280; }
+
+    .userlist-name {
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .userlist-status-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    #edit-profile-modal.hidden { display: none; }
+    #appearance-modal.hidden { display: none; }
+    #admin-modal.hidden { display: none; }
+
+    .admin-tag {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      background: linear-gradient(90deg, #f97316, #ec4899, #6366f1, #22c55e, #f97316);
+      background-size: 300% 100%;
+      color: #020617;
+      animation: admin-rainbow 3s linear infinite;
+      border: 1px solid rgba(15,23,42,0.7);
+    }
+
+    @keyframes admin-rainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-orbit"></div>
+
+  <!-- AUTH VIEW -->
+  <div id="auth-view" class="auth-shell">
+    <div class="auth-header">
+      <div class="logo-text">R A D I A N T</div>
+      <div class="auth-subtitle">Sign in or create an account to chat</div>
+    </div>
+
+    <div class="auth-toggle">
+      <button id="toggle-login" class="active">Login</button>
+      <button id="toggle-signup">Sign up</button>
+    </div>
+
+    <form id="login-form" class="auth-form">
+      <div>
+        <div class="field-label">Email</div>
+        <input type="email" id="login-email" placeholder="you@example.com" required />
+      </div>
+      <div>
+        <div class="field-label">Password</div>
+        <input type="password" id="login-password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="auth-submit">Login</button>
+      <div id="login-error" class="auth-error"></div>
+    </form>
+
+    <form id="signup-form" class="auth-form hidden">
+      <div>
+        <div class="field-label">Email</div>
+        <input type="email" id="signup-email" placeholder="you@example.com" required />
+      </div>
+      <div>
+        <div class="field-label">Password</div>
+        <input type="password" id="signup-password" placeholder="••••••••" required />
+      </div>
+      <div>
+        <div class="field-label">Username</div>
+        <input type="text" id="signup-username" placeholder="RadiantFox" required />
+      </div>
+      <div>
+        <div class="field-label">Custom status</div>
+        <input type="text" id="signup-status" placeholder="Chilling in RADIANT" />
+      </div>
+      <button type="submit" class="auth-submit">Create account</button>
+      <div id="signup-error" class="auth-error"></div>
+    </form>
+  </div>
+
+  <!-- APP VIEW -->
+  <div id="app-view" class="glass-shell hidden">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">R A D I A N T</div>
+      </div>
+
+      <div class="sidebar-section-title">Channels</div>
+      <div class="channel-list">
+        <div class="channel-item active" data-channel-id="uni-general">
+          <span class="channel-hash">#</span>
+          <span>universal</span>
+        </div>
+      </div>
+
+      <div class="user-panel">
+        <div class="user-avatar" id="user-avatar">
+          <span id="user-avatar-initials">R</span>
+          <span id="user-avatar-dot" class="status-dot status-offline"></span>
+        </div>
+        <div class="user-meta">
+          <div class="user-name" id="user-email">
+            User
+          </div>
+          <div class="user-status" id="user-status">Offline</div>
+        </div>
+        <div class="user-actions">
+          <button id="edit-profile-btn">Edit</button>
+          <button id="appearance-btn">Appearance</button>
+          <button id="admin-btn" class="hidden">Admin</button>
+          <button id="logout-btn">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="main-header">
+        <div>
+          <div class="channel-title">
+            <span class="hash">#</span>
+            <span id="channel-name">universal</span>
+          </div>
+          <div class="channel-subtitle" id="channel-subtitle">
+            Global chat for everyone in RADIANT
+          </div>
+        </div>
+        <div class="header-user">
+          Signed in as <span id="header-user-email">User</span>
+        </div>
+      </div>
+
+      <div class="main-body">
+        <div class="chat-column">
+          <div id="messages" class="messages"></div>
+
+          <div class="input-bar">
+            <div id="reply-bar" class="reply-bar hidden">
+              <div class="reply-bar-inner">
+                <div id="reply-bar-gradient" class="reply-bar-gradient"></div>
+                <div class="reply-bar-text">
+                  <div id="reply-bar-title" class="reply-bar-title">Replying to</div>
+                  <div id="reply-bar-snippet" class="reply-bar-snippet"></div>
+                </div>
+                <button id="reply-bar-cancel" class="reply-bar-cancel">×</button>
+              </div>
+            </div>
+
+            <div class="input-row">
+              <div class="input-wrapper">
+                <input id="message-input" type="text" placeholder="Send a message to #universal" autocomplete="off" />
+              </div>
+              <button id="send-btn" class="send-btn">Send</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="userlist-column">
+          <div class="userlist-header">Users</div>
+          <div id="user-list" class="userlist"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div id="edit-profile-modal" class="hidden" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  ">
+    <div style="
+      background: var(--bg-panel);
+      padding: 20px;
+      border-radius: 12px;
+      width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    ">
+      <h3 style="margin: 0; font-size: 18px;">Edit Profile</h3>
+
+      <label style="font-size: 13px;">Username</label>
+      <input id="edit-username" type="text" style="padding: 8px; border-radius: 6px; border: none; background: var(--bg-body); color: var(--text-main);">
+
+      <label style="font-size: 13px;">Custom status</label>
+      <input id="edit-status" type="text" style="padding: 8px; border-radius: 6px; border: none; background: var(--bg-body); color: var(--text-main);">
+
+      <label style="font-size: 13px; margin-top: 6px;">Gradient Color 1</label>
+      <input id="edit-grad1" type="color" style="width: 60px; height: 32px; padding: 0; border-radius: 6px; border: 1px solid var(--border); background: transparent;">
+
+      <label style="font-size: 13px;">Gradient Color 2</label>
+      <input id="edit-grad2" type="color" style="width: 60px; height: 32px; padding: 0; border-radius: 6px; border: 1px solid var(--border); background: transparent;">
+
+      <label style="font-size: 13px;">Gradient Color 3</label>
+      <input id="edit-grad3" type="color" style="width: 60px; height: 32px; padding: 0; border-radius: 6px; border: 1px solid var(--border); background: transparent;">
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+        <button id="cancel-edit" style="padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text-main); cursor:pointer;">Cancel</button>
+        <button id="save-edit" style="padding: 6px 12px; background: var(--btn-bg); border-radius: 6px; border: none; color: var(--btn-text); cursor:pointer; font-weight:600;">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPEARANCE MODAL -->
+  <div id="appearance-modal" class="hidden" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  ">
+    <div style="
+      background: var(--bg-panel);
+      padding: 20px;
+      border-radius: 12px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    ">
+      <h3 style="margin: 0; font-size: 18px;">Appearance</h3>
+
+      <label style="font-size: 13px;">Theme</label>
+      <select id="theme-select" style="
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg-body);
+        color: var(--text-main);
+      ">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="midnight">Midnight</option>
+        <option value="orange">Orange</option>
+        <option value="bloom">Bloom</option>
+      </select>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+        <button id="close-appearance" style="
+          padding: 6px 12px;
+          border-radius: 6px;
+          border: 1px solid var(--border);
+          background: transparent;
+          color: var(--text-main);
+          cursor:pointer;
+        ">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN MODAL -->
+  <div id="admin-modal" class="hidden" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  ">
+    <div style="
+      background: var(--bg-panel);
+      padding: 18px;
+      border-radius: 12px;
+      width: 520px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    ">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin: 0; font-size: 18px;">Admin Panel</h3>
+        <button id="admin-close" style="
+          border:none;
+          background:transparent;
+          color:var(--text-muted);
+          cursor:pointer;
+          font-size:18px;
+        ">×</button>
+      </div>
+
+      <div style="font-size:12px; color:var(--text-muted);">
+        Manage users in the tablist: timeouts, presence, and hide/show.
+      </div>
+
+      <div id="admin-users-container" style="
+        margin-top:4px;
+        border-radius:10px;
+        border:1px solid var(--chip-border);
+        background:var(--chip-bg);
+        padding:6px;
+        max-height:60vh;
+        overflow-y:auto;
+        display:flex;
+        flex-direction:column;
+        gap:4px;
+      ">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      orderBy,
+      onSnapshot,
+      doc,
+      setDoc,
+      getDoc,
+      serverTimestamp,
+      deleteDoc,
+      runTransaction,
+      deleteField
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD4rfKO1U_LAxKyrIrQuRXeI1saokMInhA",
+      authDomain: "orangefox-ce8b1.firebaseapp.com",
+      projectId: "orangefox-ce8b1",
+      storageBucket: "orangefox-ce8b1.firebasestorage.app",
+      messagingSenderId: "859089557525",
+      appId: "1:859089557525:web:2852c1975458b867cc561c",
+      measurementId: "G-LLB6S2MVB5"
+    };
+
+    const ADMIN_EMAIL = "adminsecret@orangefox.com";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const authView = document.getElementById("auth-view");
+    const appView = document.getElementById("app-view");
+
+    const toggleLogin = document.getElementById("toggle-login");
+    const toggleSignup = document.getElementById("toggle-signup");
+    const loginForm = document.getElementById("login-form");
+    const signupForm = document.getElementById("signup-form");
+    const loginError = document.getElementById("login-error");
+    const signupError = document.getElementById("signup-error");
+
+    const logoutBtn = document.getElementById("logout-btn");
+    const userEmailSpan = document.getElementById("user-email");
+    const headerUserEmailSpan = document.getElementById("header-user-email");
+    const userStatusSpan = document.getElementById("user-status");
+    const userAvatarInitials = document.getElementById("user-avatar-initials");
+    const userAvatarDot = document.getElementById("user-avatar-dot");
+
+    const messagesEl = document.getElementById("messages");
+    const messageInput = document.getElementById("message-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    const editProfileBtn = document.getElementById("edit-profile-btn");
+    const editProfileModal = document.getElementById("edit-profile-modal");
+    const editUsernameInput = document.getElementById("edit-username");
+    const editStatusInput = document.getElementById("edit-status");
+    const editGrad1Input = document.getElementById("edit-grad1");
+    const editGrad2Input = document.getElementById("edit-grad2");
+    const editGrad3Input = document.getElementById("edit-grad3");
+    const cancelEditBtn = document.getElementById("cancel-edit");
+    const saveEditBtn = document.getElementById("save-edit");
+
+    const userListEl = document.getElementById("user-list");
+    const channelNameEl = document.getElementById("channel-name");
+    const channelSubtitleEl = document.getElementById("channel-subtitle");
+
+    const appearanceBtn = document.getElementById("appearance-btn");
+    const appearanceModal = document.getElementById("appearance-modal");
+    const closeAppearance = document.getElementById("close-appearance");
+    const themeSelect = document.getElementById("theme-select");
+
+    const replyBar = document.getElementById("reply-bar");
+    const replyBarGradient = document.getElementById("reply-bar-gradient");
+    const replyBarTitle = document.getElementById("reply-bar-title");
+    const replyBarSnippet = document.getElementById("reply-bar-snippet");
+    const replyBarCancel = document.getElementById("reply-bar-cancel");
+
+    const adminBtn = document.getElementById("admin-btn");
+    const adminModal = document.getElementById("admin-modal");
+    const adminClose = document.getElementById("admin-close");
+    const adminUsersContainer = document.getElementById("admin-users-container");
+
+    let currentUserProfile = null;
+    let currentChannelId = "uni-general";
+    let isAdmin = false;
+
+    let heartbeatInterval = null;
+    let visibilityListenerAttached = false;
+    let visibilityHandler = null;
+    let lastPresenceApplied = null;
+
+    let messagesUnsub = null;
+    let usersUnsub = null;
+
+    const usersCache = new Map();
+
+    let activeReply = null;
+
+    function setActiveReply(info) {
+      if (!info) {
+        activeReply = null;
+        replyBar.classList.add("hidden");
+        return;
+      }
+      activeReply = info;
+      replyBar.classList.remove("hidden");
+      replyBarTitle.textContent = `Replying to ${info.username}`;
+      replyBarSnippet.textContent = info.text || "";
+      replyBarGradient.style.background = `linear-gradient(180deg, ${info.grad1}, ${info.grad2}, ${info.grad3})`;
+    }
+
+    replyBarCancel.addEventListener("click", () => {
+      setActiveReply(null);
+    });
+
+    function initialsFromName(nameOrEmail) {
+      if (!nameOrEmail) return "R";
+      const base = nameOrEmail.split("@")[0];
+      const parts = base.split(/[.\s_-]+/).filter(Boolean);
+      if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+      return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+    }
+
+    function formatTimestampFromMsOrTs(createdAtMs, createdAt) {
+      let d;
+      if (typeof createdAtMs === "number") {
+        d = new Date(createdAtMs);
+      } else if (createdAt && createdAt.toDate) {
+        d = createdAt.toDate();
+      } else {
+        return "";
+      }
+      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function scrollMessagesToBottom() {
+      requestAnimationFrame(() => {
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      });
+    }
+
+    function presenceLabel(p) {
+      if (p === "online") return "Online";
+      if (p === "away") return "Away";
+      return "Offline";
+    }
+
+    function applyDotClass(el, presence) {
+      el.classList.remove("status-online", "status-away", "status-offline");
+      if (presence === "online") el.classList.add("status-online");
+      else if (presence === "away") el.classList.add("status-away");
+      else el.classList.add("status-offline");
+    }
+
+    function applyOwnPresence(presence) {
+      if (presence === lastPresenceApplied) return;
+      lastPresenceApplied = presence;
+      userStatusSpan.textContent = presenceLabel(presence);
+      applyDotClass(userAvatarDot, presence);
+    }
+
+    function applyGradientVars(grad1, grad2, grad3) {
+      document.documentElement.style.setProperty("--grad1", grad1 || "#f97316");
+      document.documentElement.style.setProperty("--grad2", grad2 || "#ec4899");
+      document.documentElement.style.setProperty("--grad3", grad3 || "#6366f1");
+    }
+
+    function computeEffectivePresence(u) {
+      if (!u) return "offline";
+
+      const overridden = u.presenceOverride === true;
+      if (overridden) {
+        return u.presence || "offline";
+      }
+
+      const last = typeof u.lastActive === "number"
+        ? u.lastActive
+        : (u.lastActive && u.lastActive.toMillis ? u.lastActive.toMillis() : 0);
+
+      if (!last) return "offline";
+
+      const delta = Date.now() - last;
+
+      if (delta < 10_000) return "online";
+      if (delta < 60_000) return "away";
+      return "offline";
+    }
+
+    function isTimedOut(profile) {
+      if (!profile) return false;
+      const until = profile.timeoutUntil;
+      if (!until) return false;
+
+      const ms = typeof until === "number"
+        ? until
+        : (until.toMillis ? until.toMillis() : 0);
+
+      if (!ms) return false;
+      return Date.now() < ms;
+    }
+
+    toggleLogin.addEventListener("click", () => {
+      toggleLogin.classList.add("active");
+      toggleSignup.classList.remove("active");
+      loginForm.classList.remove("hidden");
+      signupForm.classList.add("hidden");
+      loginError.textContent = "";
+      signupError.textContent = "";
+    });
+
+    toggleSignup.addEventListener("click", () => {
+      toggleSignup.classList.add("active");
+      toggleLogin.classList.remove("active");
+      signupForm.classList.remove("hidden");
+      loginForm.classList.add("hidden");
+      loginError.textContent = "";
+      signupError.textContent = "";
+    });
+
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      signupError.textContent = "";
+
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      const username = document.getElementById("signup-username").value.trim();
+      const customStatus = (document.getElementById("signup-status").value.trim() || "");
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const user = cred.user;
+
+        await setDoc(doc(db, "users", user.uid), {
+          email,
+          username,
+          customStatus,
+          presence: "online",
+          lastActive: Date.now(),
+          createdAt: Date.now(),
+          grad1: "#f97316",
+          grad2: "#ec4899",
+          grad3: "#6366f1",
+          timeoutUntil: null,
+          hidden: false,
+          presenceOverride: false
+        });
+      } catch (err) {
+        signupError.textContent = err.message;
+      }
+    });
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginError.textContent = "";
+
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (err) {
+        loginError.textContent = err.message;
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+    });
+
+    editProfileBtn.addEventListener("click", () => {
+      if (!currentUserProfile) return;
+      editUsernameInput.value = currentUserProfile.username || "";
+      editStatusInput.value = currentUserProfile.customStatus || "";
+      editGrad1Input.value = currentUserProfile.grad1 || "#f97316";
+      editGrad2Input.value = currentUserProfile.grad2 || "#ec4899";
+      editGrad3Input.value = currentUserProfile.grad3 || "#6366f1";
+      editProfileModal.classList.remove("hidden");
+    });
+
+    cancelEditBtn.addEventListener("click", () => {
+      editProfileModal.classList.add("hidden");
+    });
+
+    saveEditBtn.addEventListener("click", async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const newUsername = editUsernameInput.value.trim() || user.email;
+      const newCustomStatus = editStatusInput.value.trim() || "";
+      const newGrad1 = editGrad1Input.value || "#f97316";
+      const newGrad2 = editGrad2Input.value || "#ec4899";
+      const newGrad3 = editGrad3Input.value || "#6366f1";
+
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          username: newUsername,
+          customStatus: newCustomStatus,
+          grad1: newGrad1,
+          grad2: newGrad2,
+          grad3: newGrad3
+        }, { merge: true });
+
+        const updatedSnap = await getDoc(doc(db, "users", user.uid));
+        const updatedProfile = updatedSnap.exists() ? updatedSnap.data() : null;
+
+        currentUserProfile = {
+          ...(currentUserProfile || {}),
+          email: updatedProfile?.email || user.email,
+          username: updatedProfile?.username || newUsername,
+          customStatus: updatedProfile?.customStatus || newCustomStatus,
+          presence: computeEffectivePresence(updatedProfile || currentUserProfile),
+          grad1: updatedProfile?.grad1 || newGrad1,
+          grad2: updatedProfile?.grad2 || newGrad2,
+          grad3: updatedProfile?.grad3 || newGrad3,
+          timeoutUntil: updatedProfile?.timeoutUntil || null,
+          hidden: updatedProfile?.hidden ?? currentUserProfile?.hidden ?? false,
+          presenceOverride: updatedProfile?.presenceOverride ?? false
+        };
+
+        renderSidebarUserName();
+        userAvatarInitials.textContent = initialsFromName(currentUserProfile.username);
+        applyGradientVars(currentUserProfile.grad1, currentUserProfile.grad2, currentUserProfile.grad3);
+        applyOwnPresence(currentUserProfile.presence);
+
+        editProfileModal.classList.add("hidden");
+      } catch (err) {
+        console.error("Error updating profile:", err);
+      }
+    });
+
+    function createAdminTag() {
+      const span = document.createElement("span");
+      span.className = "admin-tag";
+      span.textContent = "Admin";
+      return span;
+    }
+
+    function renderSidebarUserName() {
+      const nameContainer = userEmailSpan;
+      nameContainer.innerHTML = "";
+      const textNode = document.createTextNode(currentUserProfile.username || currentUserProfile.email || "User");
+      nameContainer.appendChild(textNode);
+      if (isAdmin) {
+        nameContainer.appendChild(createAdminTag());
+      }
+      headerUserEmailSpan.textContent = currentUserProfile.username || currentUserProfile.email || "User";
+    }
+
+    function renderMessage(msg, grouped, id) {
+      const msgEl = document.createElement("div");
+      msgEl.className = "message";
+
+      const displayName = msg.username || msg.userEmail || "Unknown";
+
+      const senderProfile = msg.sender ? usersCache.get(msg.sender) : null;
+      const g1 = senderProfile?.grad1 || "#f97316";
+      const g2 = senderProfile?.grad2 || "#ec4899";
+      const g3 = senderProfile?.grad3 || "#6366f1";
+
+      if (!grouped) {
+        const avatarEl = document.createElement("div");
+        avatarEl.className = "message-avatar";
+        avatarEl.textContent = initialsFromName(displayName);
+        avatarEl.style.background = `radial-gradient(circle at top, ${g1}, ${g2}, ${g3})`;
+
+        const bodyEl = document.createElement("div");
+        bodyEl.className = "message-body";
+
+        if (msg.replyPreview) {
+          const rp = msg.replyPreview;
+          const rg1 = rp.grad1 || g1;
+          const rg2 = rp.grad2 || g2;
+          const rg3 = rp.grad3 || g3;
+
+          const rpEl = document.createElement("div");
+          rpEl.className = "reply-preview";
+
+          const barEl = document.createElement("div");
+          barEl.className = "reply-preview-bar";
+          barEl.style.background = `linear-gradient(180deg, ${rg1}, ${rg2}, ${rg3})`;
+
+          const textEl = document.createElement("div");
+          textEl.className = "reply-preview-text";
+          const uname = rp.username || "Unknown";
+          const snippet = rp.text || "";
+          textEl.innerHTML = `<strong>${uname}</strong> — ${snippet}`;
+
+          rpEl.appendChild(barEl);
+          rpEl.appendChild(textEl);
+          bodyEl.appendChild(rpEl);
+        }
+
+        const headerEl = document.createElement("div");
+        headerEl.className = "message-header";
+
+        const usernameEl = document.createElement("span");
+        usernameEl.className = "message-username";
+
+        const nameText = document.createElement("span");
+        nameText.textContent = displayName;
+        usernameEl.appendChild(nameText);
+
+        if (msg.userEmail === ADMIN_EMAIL) {
+          usernameEl.appendChild(createAdminTag());
+        }
+
+        const tsEl = document.createElement("span");
+        tsEl.className = "message-timestamp";
+        tsEl.textContent = formatTimestampFromMsOrTs(msg.createdAtMs, msg.createdAt);
+
+        const replyBtn = document.createElement("button");
+        replyBtn.className = "reply-btn";
+        replyBtn.textContent = "↩";
+        replyBtn.title = "Reply";
+
+        replyBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const snippet = (msg.text || "").trim().slice(0, 80);
+          const info = {
+            messageId: id,
+            username: displayName,
+            text: snippet,
+            grad1: g1,
+            grad2: g2,
+            grad3: g3
+          };
+          setActiveReply(info);
+        });
+
+        headerEl.appendChild(usernameEl);
+        headerEl.appendChild(tsEl);
+        headerEl.appendChild(replyBtn);
+
+        if (isAdmin) {
+          const delBtn = document.createElement("button");
+          delBtn.className = "admin-delete-btn";
+          delBtn.textContent = "Delete";
+          delBtn.title = "Delete message";
+          delBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            try {
+              await deleteDoc(doc(db, "channels", currentChannelId, "messages", id));
+            } catch (err) {
+              console.error("Error deleting message:", err);
+            }
+          });
+          headerEl.appendChild(delBtn);
+        }
+
+        const textEl = document.createElement("div");
+        textEl.className = "message-text";
+        textEl.textContent = msg.text || "";
+
+        bodyEl.appendChild(headerEl);
+        bodyEl.appendChild(textEl);
+
+        msgEl.appendChild(avatarEl);
+        msgEl.appendChild(bodyEl);
+      } else {
+        msgEl.style.marginLeft = "38px";
+
+        const bodyWrap = document.createElement("div");
+        bodyWrap.style.display = "flex";
+        bodyWrap.style.alignItems = "center";
+        bodyWrap.style.width = "100%";
+        bodyWrap.style.gap = "4px";
+
+        const textContainer = document.createElement("div");
+        textContainer.style.display = "flex";
+        textContainer.style.flexDirection = "column";
+        textContainer.style.flex = "1";
+
+        if (msg.replyPreview) {
+          const rp = msg.replyPreview;
+          const rg1 = rp.grad1 || g1;
+          const rg2 = rp.grad2 || g2;
+          const rg3 = rp.grad3 || g3;
+
+          const rpEl = document.createElement("div");
+          rpEl.className = "reply-preview";
+
+          const barEl = document.createElement("div");
+          barEl.className = "reply-preview-bar";
+          barEl.style.background = `linear-gradient(180deg, ${rg1}, ${rg2}, ${rg3})`;
+
+          const textEl = document.createElement("div");
+          textEl.className = "reply-preview-text";
+          const uname = rp.username || "Unknown";
+          const snippet = rp.text || "";
+          textEl.innerHTML = `<strong>${uname}</strong> — ${snippet}`;
+
+          rpEl.appendChild(barEl);
+          rpEl.appendChild(textEl);
+          textContainer.appendChild(rpEl);
+        }
+
+        const textEl = document.createElement("div");
+        textEl.className = "message-text";
+        textEl.textContent = msg.text || "";
+        textContainer.appendChild(textEl);
+
+        const controls = document.createElement("div");
+        controls.style.display = "flex";
+        controls.style.alignItems = "center";
+        controls.style.gap = "4px";
+
+        const replyBtn = document.createElement("button");
+        replyBtn.className = "reply-btn";
+        replyBtn.textContent = "↩";
+        replyBtn.title = "Reply";
+
+        replyBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const snippet = (msg.text || "").trim().slice(0, 80);
+          const info = {
+            messageId: id,
+            username: displayName,
+            text: snippet,
+            grad1: g1,
+            grad2: g2,
+            grad3: g3
+          };
+          setActiveReply(info);
+        });
+
+        controls.appendChild(replyBtn);
+
+        if (isAdmin) {
+          const delBtn = document.createElement("button");
+          delBtn.className = "admin-delete-btn";
+          delBtn.textContent = "Delete";
+          delBtn.title = "Delete message";
+          delBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            try {
+              await deleteDoc(doc(db, "channels", currentChannelId, "messages", id));
+            } catch (err) {
+              console.error("Error deleting message:", err);
+            }
+          });
+          controls.appendChild(delBtn);
+        }
+
+        bodyWrap.appendChild(textContainer);
+        bodyWrap.appendChild(controls);
+        msgEl.appendChild(bodyWrap);
+      }
+
+      messagesEl.appendChild(msgEl);
+    }
+
+    function subscribeToChannelMessages(channelId) {
+      if (messagesUnsub) messagesUnsub();
+
+      const q = query(
+        collection(db, "channels", channelId, "messages"),
+        orderBy("createdAt", "asc")
+      );
+
+      messagesUnsub = onSnapshot(q, (snapshot) => {
+        messagesEl.innerHTML = "";
+
+        let lastUser = null;
+        let lastTimestamp = 0;
+
+        snapshot.forEach((docSnap) => {
+          const msg = docSnap.data();
+          const id = docSnap.id;
+
+          const displayName = msg.username || msg.userEmail || "Unknown";
+          const thisUser = displayName;
+
+          const thisTime = typeof msg.createdAtMs === "number"
+            ? msg.createdAtMs
+            : (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now());
+
+          const sameUser = thisUser === lastUser;
+          const withinWindow = Math.abs(thisTime - lastTimestamp) < 3 * 60 * 1000;
+
+          let grouped = sameUser && withinWindow;
+
+          if (msg.replyTo) {
+            grouped = false;
+          }
+
+          renderMessage(msg, grouped, id);
+
+          lastUser = thisUser;
+          lastTimestamp = thisTime;
+        });
+
+        scrollMessagesToBottom();
+      });
+    }
+
+    async function sendChannelMessage() {
+      const user = auth.currentUser;
+      if (!user || !currentChannelId) return;
+
+      if (isTimedOut(currentUserProfile)) {
+        alert("You are currently timed out and cannot send messages.");
+        return;
+      }
+
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      const username = currentUserProfile?.username || user.email;
+      const nowMs = Date.now();
+
+      const payload = {
+        text,
+        userEmail: user.email,
+        username,
+        sender: user.uid,
+        createdAt: serverTimestamp(),
+        createdAtMs: nowMs
+      };
+
+      if (activeReply) {
+        payload.replyTo = activeReply.messageId;
+        payload.replyPreview = {
+          username: activeReply.username,
+          text: activeReply.text,
+          grad1: activeReply.grad1,
+          grad2: activeReply.grad2,
+          grad3: activeReply.grad3
+        };
+      }
+
+      try {
+        await addDoc(collection(db, "channels", currentChannelId, "messages"), payload);
+        messageInput.value = "";
+        setActiveReply(null);
+      } catch (err) {
+        console.error("Error sending channel message:", err);
+      }
+    }
+
+    sendBtn.addEventListener("click", () => {
+      sendChannelMessage();
+    });
+
+    messageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendChannelMessage();
+      }
+    });
+
+    function stopPresence() {
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+      }
+      if (visibilityListenerAttached && visibilityHandler) {
+        document.removeEventListener("visibilitychange", visibilityHandler);
+        visibilityListenerAttached = false;
+      }
+    }
+
+    function startPresence(userId) {
+      const userRef = doc(db, "users", userId);
+
+      const updatePresence = async () => {
+        try {
+          const result = await runTransaction(db, async (tx) => {
+            const snap = await tx.get(userRef);
+            const data = snap.exists() ? snap.data() : {};
+
+            if (data.presenceOverride === true) {
+              return {
+                overridden: true,
+                presence: data.presence || "offline"
+              };
+            }
+
+            const presence = document.hidden ? "away" : "online";
+
+            tx.set(userRef, {
+              presence,
+              lastActive: Date.now()
+            }, { merge: true });
+
+            return {
+              overridden: false,
+              presence
+            };
+          });
+
+          if (!currentUserProfile) return;
+
+          if (result.overridden) {
+            currentUserProfile.presenceOverride = true;
+            currentUserProfile.presence = result.presence;
+            applyOwnPresence(result.presence);
+          } else {
+            currentUserProfile.presenceOverride = false;
+            currentUserProfile.presence = result.presence;
+            applyOwnPresence(result.presence);
+          }
+        } catch (err) {
+          console.error("Error updating presence:", err);
+        }
+      };
+
+      updatePresence();
+      heartbeatInterval = setInterval(updatePresence, 3000);
+
+      visibilityHandler = () => {
+        updatePresence();
+      };
+
+      document.addEventListener("visibilitychange", visibilityHandler);
+      visibilityListenerAttached = true;
+
+      window.addEventListener("beforeunload", () => {
+        setDoc(userRef, {
+          presence: "offline",
+          lastActive: Date.now()
+        }, { merge: true }).catch(() => {});
+      });
+    }
+
+    function openChannel(channelId) {
+      currentChannelId = channelId;
+
+      channelNameEl.textContent = "universal";
+      channelSubtitleEl.textContent = "Global chat for everyone in RADIANT";
+      messageInput.placeholder = "Send a message to #universal";
+
+      document.querySelectorAll(".channel-item").forEach(el => {
+        el.classList.toggle("active", el.dataset.channelId === channelId);
+      });
+
+      subscribeToChannelMessages(channelId);
+    }
+
+    document.querySelectorAll(".channel-item").forEach(el => {
+      el.addEventListener("click", () => {
+        const id = el.dataset.channelId;
+        openChannel(id);
+      });
+    });
+
+    function subscribeToUsers() {
+      if (usersUnsub) usersUnsub();
+
+      usersUnsub = onSnapshot(collection(db, "users"), (snapshot) => {
+        userListEl.innerHTML = "";
+        usersCache.clear();
+
+        const current = auth.currentUser;
+
+        snapshot.forEach((docSnap) => {
+          const u = docSnap.data();
+          const uid = docSnap.id;
+          usersCache.set(uid, u);
+
+          const effectivePresence = computeEffectivePresence(u);
+          const hidden = u.hidden === true;
+
+          if (current && uid === current.uid) {
+            currentUserProfile = {
+              email: u.email || current.email,
+              username: u.username || current.email,
+              customStatus: u.customStatus || "",
+              presence: effectivePresence,
+              grad1: u.grad1 || "#f97316",
+              grad2: u.grad2 || "#ec4899",
+              grad3: u.grad3 || "#6366f1",
+              timeoutUntil: u.timeoutUntil || null,
+              hidden,
+              presenceOverride: u.presenceOverride === true
+            };
+            renderSidebarUserName();
+            userAvatarInitials.textContent = initialsFromName(currentUserProfile.username);
+            applyGradientVars(currentUserProfile.grad1, currentUserProfile.grad2, currentUserProfile.grad3);
+            applyOwnPresence(effectivePresence);
+          }
+
+          if (!hidden) {
+            const item = document.createElement("div");
+            item.className = "userlist-item";
+
+            const avatarWrap = document.createElement("div");
+            avatarWrap.className = "userlist-avatar-wrap";
+
+            const avatar = document.createElement("div");
+            avatar.className = "userlist-avatar";
+            avatar.textContent = initialsFromName(u.username || u.email || "U");
+
+            const g1 = u.grad1 || "#f97316";
+            const g2 = u.grad2 || "#ec4899";
+            const g3 = u.grad3 || "#6366f1";
+            avatar.style.background = `radial-gradient(circle at top, ${g1}, ${g2}, ${g3})`;
+
+            const dot = document.createElement("div");
+            dot.className = "userlist-status-dot";
+            applyDotClass(dot, effectivePresence);
+
+            avatarWrap.appendChild(avatar);
+            avatarWrap.appendChild(dot);
+
+            const textWrap = document.createElement("div");
+            const nameEl = document.createElement("div");
+            nameEl.className = "userlist-name";
+
+            const nameText = document.createElement("span");
+            nameText.textContent = u.username || u.email || "Unknown";
+            nameEl.appendChild(nameText);
+
+            if (u.email === ADMIN_EMAIL) {
+              nameEl.appendChild(createAdminTag());
+            }
+
+            const statusText = document.createElement("div");
+            statusText.className = "userlist-status-text";
+
+            const label = presenceLabel(effectivePresence);
+            const timeoutActive = isTimedOut(u);
+            const overridden = u.presenceOverride === true;
+
+            let statusStr = label;
+            if (timeoutActive) statusStr += " • TIMED OUT";
+            if (u.customStatus) statusStr += ` • ${u.customStatus}`;
+            if (overridden) statusStr += " • overridden";
+
+            statusText.textContent = statusStr;
+
+            textWrap.appendChild(nameEl);
+            textWrap.appendChild(statusText);
+
+            item.appendChild(avatarWrap);
+            item.appendChild(textWrap);
+
+            userListEl.appendChild(item);
+          }
+        });
+
+        if (isAdmin) {
+          renderAdminUserList();
+        }
+      });
+    }
+
+    appearanceBtn.addEventListener("click", () => {
+      appearanceModal.classList.remove("hidden");
+    });
+
+    closeAppearance.addEventListener("click", () => {
+      appearanceModal.classList.add("hidden");
+    });
+
+    themeSelect.addEventListener("change", () => {
+      const theme = themeSelect.value;
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("theme", theme);
+    });
+
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    themeSelect.value = savedTheme;
+
+    function renderAdminUserList() {
+      adminUsersContainer.innerHTML = "";
+      usersCache.forEach((u, uid) => {
+        const effectivePresence = computeEffectivePresence(u);
+        const timeoutActive = isTimedOut(u);
+        const hidden = u.hidden === true;
+        const overridden = u.presenceOverride === true;
+
+        const row = document.createElement("div");
+        row.style.display = "flex";
+        row.style.alignItems = "center";
+        row.style.justifyContent = "space-between";
+        row.style.gap = "6px";
+        row.style.padding = "4px 6px";
+        row.style.borderRadius = "8px";
+
+        const left = document.createElement("div");
+        left.style.display = "flex";
+        left.style.flexDirection = "column";
+        left.style.fontSize = "12px";
+
+        const name = document.createElement("div");
+        name.style.display = "inline-flex";
+        name.style.alignItems = "center";
+        name.style.gap = "4px";
+
+        const nameText = document.createElement("span");
+        nameText.textContent = u.username || u.email || "Unknown";
+        name.appendChild(nameText);
+
+        if (u.email === ADMIN_EMAIL) {
+          name.appendChild(createAdminTag());
+        }
+
+        const meta = document.createElement("div");
+        meta.style.fontSize = "11px";
+        meta.style.color = "var(--text-muted)";
+        const label = presenceLabel(effectivePresence);
+        const timeoutLabel = timeoutActive ? " • TIMED OUT" : "";
+        const hiddenLabel = hidden ? " • HIDDEN" : "";
+        const overriddenLabel = overridden ? " • overridden" : "";
+        meta.textContent = `${label}${timeoutLabel}${hiddenLabel}${overriddenLabel}`;
+
+        left.appendChild(name);
+        left.appendChild(meta);
+
+        const right = document.createElement("div");
+        right.style.display = "flex";
+        right.style.flexWrap = "wrap";
+        right.style.gap = "4px";
+
+        function makeBtn(text, title, handler) {
+          const b = document.createElement("button");
+          b.textContent = text;
+          b.title = title;
+          b.style.border = "1px solid var(--border)";
+          b.style.borderRadius = "999px";
+          b.style.padding = "2px 6px";
+          b.style.fontSize = "11px";
+          b.style.background = "var(--bg-body)";
+          b.style.color = "var(--text-main)";
+          b.style.cursor = "pointer";
+          b.addEventListener("click", handler);
+          return b;
+        }
+
+        const timeout5 = makeBtn("5m", "Timeout 5 minutes", async () => {
+          const until = Date.now() + 5 * 60 * 1000;
+          await setDoc(doc(db, "users", uid), { timeoutUntil: until }, { merge: true });
+        });
+
+        const timeout60 = makeBtn("1h", "Timeout 1 hour", async () => {
+          const until = Date.now() + 60 * 60 * 1000;
+          await setDoc(doc(db, "users", uid), { timeoutUntil: until }, { merge: true });
+        });
+
+        const clearTimeoutBtn = makeBtn("Clear", "Clear timeout", async () => {
+          await setDoc(doc(db, "users", uid), {
+            timeoutUntil: deleteField()
+          }, { merge: true });
+        });
+
+        const forceOnline = makeBtn("Online", "Force online", async () => {
+          await setDoc(doc(db, "users", uid), {
+            presence: "online",
+            lastActive: Date.now(),
+            presenceOverride: true
+          }, { merge: true });
+
+          if (auth.currentUser && auth.currentUser.uid === uid && currentUserProfile) {
+            currentUserProfile.presenceOverride = true;
+            currentUserProfile.presence = "online";
+            applyOwnPresence("online");
+          }
+        });
+
+        const forceAway = makeBtn("Away", "Force away", async () => {
+          await setDoc(doc(db, "users", uid), {
+            presence: "away",
+            lastActive: Date.now(),
+            presenceOverride: true
+          }, { merge: true });
+
+          if (auth.currentUser && auth.currentUser.uid === uid && currentUserProfile) {
+            currentUserProfile.presenceOverride = true;
+            currentUserProfile.presence = "away";
+            applyOwnPresence("away");
+          }
+        });
+
+        const forceOffline = makeBtn("Offline", "Force offline", async () => {
+          await setDoc(doc(db, "users", uid), {
+            presence: "offline",
+            lastActive: Date.now(),
+            presenceOverride: true
+          }, { merge: true });
+
+          if (auth.currentUser && auth.currentUser.uid === uid && currentUserProfile) {
+            currentUserProfile.presenceOverride = true;
+            currentUserProfile.presence = "offline";
+            applyOwnPresence("offline");
+          }
+        });
+
+        const clearOverrideBtn = makeBtn("Clear Override", "Remove forced presence", async () => {
+          await setDoc(doc(db, "users", uid), {
+            presenceOverride: false,
+            presence: "offline"
+          }, { merge: true });
+
+          if (auth.currentUser && auth.currentUser.uid === uid && currentUserProfile) {
+            currentUserProfile.presenceOverride = false;
+            currentUserProfile.presence = "offline";
+            applyOwnPresence("offline");
+          }
+        });
+
+        const hideShowBtn = makeBtn(
+          hidden ? "Show" : "Hide",
+          hidden ? "Show in tablist" : "Hide from tablist",
+          async () => {
+            await setDoc(doc(db, "users", uid), { hidden: !hidden }, { merge: true });
+          }
+        );
+
+        right.appendChild(timeout5);
+        right.appendChild(timeout60);
+        right.appendChild(clearTimeoutBtn);
+        right.appendChild(forceOnline);
+        right.appendChild(forceAway);
+        right.appendChild(forceOffline);
+        right.appendChild(clearOverrideBtn);
+        right.appendChild(hideShowBtn);
+
+        row.appendChild(left);
+        row.appendChild(right);
+
+        adminUsersContainer.appendChild(row);
+      });
+    }
+
+    adminBtn.addEventListener("click", () => {
+      if (!isAdmin) return;
+      renderAdminUserList();
+      adminModal.classList.remove("hidden");
+    });
+
+    adminClose.addEventListener("click", () => {
+      adminModal.classList.add("hidden");
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        authView.classList.add("hidden");
+        appView.classList.remove("hidden");
+
+        try {
+          const profileSnap = await getDoc(doc(db, "users", user.uid));
+          const profile = profileSnap.exists() ? profileSnap.data() : null;
+
+          const username = profile?.username || user.email;
+          const customStatus = profile?.customStatus || "";
+          const effectivePresence = computeEffectivePresence(profile || {});
+          const grad1 = profile?.grad1 || "#f97316";
+          const grad2 = profile?.grad2 || "#ec4899";
+          const grad3 = profile?.grad3 || "#6366f1";
+          const timeoutUntil = profile?.timeoutUntil || null;
+          const hidden = profile?.hidden === true;
+          const presenceOverride = profile?.presenceOverride === true;
+
+          currentUserProfile = {
+            email: user.email,
+            username,
+            customStatus,
+            presence: effectivePresence,
+            grad1,
+            grad2,
+            grad3,
+            timeoutUntil,
+            hidden,
+            presenceOverride
+          };
+
+          isAdmin = user.email === ADMIN_EMAIL;
+          adminBtn.classList.toggle("hidden", !isAdmin);
+
+          renderSidebarUserName();
+          userAvatarInitials.textContent = initialsFromName(currentUserProfile.username);
+          applyOwnPresence(effectivePresence);
+          applyGradientVars(grad1, grad2, grad3);
+
+          editUsernameInput.value = username;
+          editStatusInput.value = customStatus;
+          editGrad1Input.value = grad1;
+          editGrad2Input.value = grad2;
+          editGrad3Input.value = grad3;
+
+        } catch (err) {
+          console.error("Error loading profile:", err);
+          const fallback = user.email;
+          currentUserProfile = {
+            email: user.email,
+            username: fallback,
+            customStatus: "",
+            presence: "online",
+            grad1: "#f97316",
+            grad2: "#ec4899",
+            grad3: "#6366f1",
+            timeoutUntil: null,
+            hidden: false,
+            presenceOverride: false
+          };
+          isAdmin = user.email === ADMIN_EMAIL;
+          adminBtn.classList.toggle("hidden", !isAdmin);
+
+          renderSidebarUserName();
+          userAvatarInitials.textContent = initialsFromName(fallback);
+          applyOwnPresence("online");
+          applyGradientVars("#f97316", "#ec4899", "#6366f1");
+        }
+
+        openChannel("uni-general");
+        subscribeToUsers();
+        startPresence(user.uid);
+      } else {
+        stopPresence();
+        appView.classList.add("hidden");
+        authView.classList.remove("hidden");
+        if (messagesUnsub) messagesUnsub();
+        if (usersUnsub) usersUnsub();
+        messagesEl.innerHTML = "";
+        userListEl.innerHTML = "";
+        loginForm.reset();
+        signupForm.reset();
+        loginError.textContent = "";
+        signupError.textContent = "";
+        lastPresenceApplied = null;
+        currentChannelId = "uni-general";
+        setActiveReply(null);
+        isAdmin = false;
+        adminBtn.classList.add("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
