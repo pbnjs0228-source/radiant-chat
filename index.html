@@ -1894,7 +1894,8 @@
             let statusStr = label;
             if (timeoutActive) statusStr += " • TIMED OUT";
             if (u.customStatus) statusStr += ` • ${u.customStatus}`;
-            if (overridden) statusStr += " • overridden";
+            // only show "overridden" in tablist if *viewer* is admin
+            if (overridden && isAdmin) statusStr += " • overridden";
 
             statusText.textContent = statusStr;
 
@@ -2017,7 +2018,7 @@
         const forceOnline = makeBtn("Online", "Force online", async () => {
           await setDoc(doc(db, "users", uid), {
             presence: "online",
-            lastActive: Date.now(),
+            // do NOT touch lastActive here, so clearing override falls back to real heartbeat
             presenceOverride: true
           }, { merge: true });
 
@@ -2031,7 +2032,7 @@
         const forceAway = makeBtn("Away", "Force away", async () => {
           await setDoc(doc(db, "users", uid), {
             presence: "away",
-            lastActive: Date.now(),
+            // do NOT touch lastActive here
             presenceOverride: true
           }, { merge: true });
 
@@ -2045,7 +2046,7 @@
         const forceOffline = makeBtn("Offline", "Force offline", async () => {
           await setDoc(doc(db, "users", uid), {
             presence: "offline",
-            lastActive: Date.now(),
+            // do NOT touch lastActive here
             presenceOverride: true
           }, { merge: true });
 
@@ -2058,14 +2059,14 @@
 
         const clearOverrideBtn = makeBtn("Clear Override", "Remove forced presence", async () => {
           await setDoc(doc(db, "users", uid), {
-            presenceOverride: false,
-            presence: "offline"
+            // just drop the override flag; presence field can be ignored by computeEffectivePresence
+            presenceOverride: false
           }, { merge: true });
 
           if (auth.currentUser && auth.currentUser.uid === uid && currentUserProfile) {
             currentUserProfile.presenceOverride = false;
-            currentUserProfile.presence = "offline";
-            applyOwnPresence("offline");
+            // let heartbeat recalc; for now we keep whatever presence is until next tick
+            applyOwnPresence(currentUserProfile.presence || "offline");
           }
         });
 
