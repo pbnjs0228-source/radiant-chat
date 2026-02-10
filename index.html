@@ -1894,8 +1894,8 @@
             let statusStr = label;
             if (timeoutActive) statusStr += " • TIMED OUT";
             if (u.customStatus) statusStr += ` • ${u.customStatus}`;
-            // only show "overridden" in tablist if *viewer* is admin
-            if (overridden && isAdmin) statusStr += " • overridden";
+            // IMPORTANT: only show "overridden" in the tablist if the *viewer* is admin
+            if (isAdmin && overridden) statusStr += " • overridden";
 
             statusText.textContent = statusStr;
 
@@ -2018,7 +2018,7 @@
         const forceOnline = makeBtn("Online", "Force online", async () => {
           await setDoc(doc(db, "users", uid), {
             presence: "online",
-            // do NOT touch lastActive here, so clearing override falls back to real heartbeat
+            lastActive: Date.now(),
             presenceOverride: true
           }, { merge: true });
 
@@ -2032,7 +2032,7 @@
         const forceAway = makeBtn("Away", "Force away", async () => {
           await setDoc(doc(db, "users", uid), {
             presence: "away",
-            // do NOT touch lastActive here
+            lastActive: Date.now(),
             presenceOverride: true
           }, { merge: true });
 
@@ -2046,7 +2046,7 @@
         const forceOffline = makeBtn("Offline", "Force offline", async () => {
           await setDoc(doc(db, "users", uid), {
             presence: "offline",
-            // do NOT touch lastActive here
+            lastActive: Date.now(),
             presenceOverride: true
           }, { merge: true });
 
@@ -2058,15 +2058,20 @@
         });
 
         const clearOverrideBtn = makeBtn("Clear Override", "Remove forced presence", async () => {
+          // DEEP FIX: do NOT force a presence value here.
+          // Just remove the override flag and let heartbeat/lastActive
+          // drive the "actual" presence again.
           await setDoc(doc(db, "users", uid), {
-            // just drop the override flag; presence field can be ignored by computeEffectivePresence
             presenceOverride: false
           }, { merge: true });
 
           if (auth.currentUser && auth.currentUser.uid === uid && currentUserProfile) {
             currentUserProfile.presenceOverride = false;
-            // let heartbeat recalc; for now we keep whatever presence is until next tick
-            applyOwnPresence(currentUserProfile.presence || "offline");
+            // Recompute from current cached user data (without override)
+            const uNoOverride = { ...u, presenceOverride: false };
+            const newPresence = computeEffectivePresence(uNoOverride);
+            currentUserProfile.presence = newPresence;
+            applyOwnPresence(newPresence);
           }
         });
 
