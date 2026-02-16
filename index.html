@@ -1,507 +1,1345 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="cosy-dark">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <title>RADIANT</title>
+  <title>RADIANT — Cosy Rounded Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <style>
-    :root{
-      --bg-body:#020617;--bg-panel:rgba(15,23,42,.9);--border:rgba(148,163,184,.35);
-      --text-main:#e5e7eb;--text-muted:#9ca3af;--accent:#ec4899;--accent2:#6366f1;--accent3:#f97316;
-      --grad1:#f97316;--grad2:#ec4899;--grad3:#6366f1;
-      --btn-bg:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2));
-      --btn-text:#020617;--btn-border:var(--border);--chip-bg:rgba(15,23,42,.9);--chip-border:rgba(148,163,184,.5)
+    :root {
+      --bg-body: #050816;
+      --bg-panel: rgba(15, 23, 42, 0.96);
+      --bg-elevated: rgba(17, 24, 39, 0.98);
+      --bg-sidebar: rgba(15, 23, 42, 0.98);
+      --bg-input: rgba(17, 24, 39, 0.98);
+      --border-soft: rgba(148, 163, 184, 0.35);
+      --border-strong: rgba(96, 165, 250, 0.9);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --accent-soft-1: #60a5fa;
+      --accent-soft-2: #a855f7;
+      --accent-soft-3: #f97373;
+      --danger: #f97373;
+      --chip-bg: rgba(15, 23, 42, 0.9);
+      --chip-border: rgba(148, 163, 184, 0.4);
+      --scrollbar: #4b5563;
+      --grad1: #60a5fa;
+      --grad2: #a855f7;
+      --grad3: #f97373;
+      --radius-panel: 22px;
+      --radius-bubble: 18px;
+      --radius-hard: 14px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.85);
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    :root[data-theme=light]{
-      --bg-body:#f8fafc;--bg-panel:#fff;--border:rgba(0,0,0,.1);--text-main:#0f172a;--text-muted:#475569;
-      --accent:#fb923c;--accent2:#6366f1;--accent3:#ec4899;
-      --btn-bg:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2));
-      --btn-text:#020617;--btn-border:rgba(0,0,0,.2);--chip-bg:#e5e7eb;--chip-border:rgba(0,0,0,.15)
+
+    [data-theme="cosy-dark"] {
+      --bg-body: #050816;
+      --bg-panel: rgba(15, 23, 42, 0.96);
+      --bg-elevated: rgba(17, 24, 39, 0.98);
+      --bg-sidebar: rgba(15, 23, 42, 0.98);
+      --bg-input: rgba(17, 24, 39, 0.98);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --scrollbar: #4b5563;
     }
-    :root[data-theme=dark]{
-      --bg-body:#0f172a;--bg-panel:#1e293b;--border:rgba(148,163,184,.25);--text-main:#e2e8f0;--text-muted:#94a3b8;
-      --accent:#ec4899;--accent2:#6366f1;--accent3:#f97316;
-      --btn-bg:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2));
-      --btn-text:#020617;--btn-border:rgba(148,163,184,.5);--chip-bg:rgba(15,23,42,.95);--chip-border:rgba(148,163,184,.6)
+
+    [data-theme="dark"] {
+      --bg-body: #020617;
+      --bg-panel: #020617;
+      --bg-elevated: #020617;
+      --bg-sidebar: #020617;
+      --bg-input: #020617;
+      --text-main: #e5e7eb;
+      --text-muted: #6b7280;
+      --accent-soft-1: #3b82f6;
+      --accent-soft-2: #6366f1;
+      --accent-soft-3: #f97373;
+      --scrollbar: #6b7280;
     }
-    :root[data-theme=midnight]{
-      --bg-body:#00010a;--bg-panel:#0a0f1f;--border:rgba(99,102,241,.4);--text-main:#e2e8f0;--text-muted:#64748b;
-      --accent:#6366f1;--accent2:#ec4899;--accent3:#22c55e;
-      --btn-bg:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2));
-      --btn-text:#020617;--btn-border:rgba(99,102,241,.6);--chip-bg:rgba(15,23,42,.95);--chip-border:rgba(99,102,241,.6)
+
+    [data-theme="light"] {
+      --bg-body: #f3f4f6;
+      --bg-panel: #ffffff;
+      --bg-elevated: #ffffff;
+      --bg-sidebar: #f9fafb;
+      --bg-input: #f9fafb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border-soft: rgba(148, 163, 184, 0.6);
+      --border-strong: rgba(59, 130, 246, 0.9);
+      --scrollbar: #9ca3af;
     }
-    :root[data-theme=bloom]{
-      --bg-body:#fdf2f8;--bg-panel:#ffe4f1;--border:rgba(236,72,153,.4);--text-main:#831843;--text-muted:#be185d;
-      --accent:#ec4899;--accent2:#f472b6;--accent3:#fb7185;
-      --btn-bg:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2));
-      --btn-text:#fdf2f8;--btn-border:rgba(236,72,153,.7);--chip-bg:#fce7f3;--chip-border:rgba(236,72,153,.6)
+
+    [data-theme="midnight"] {
+      --bg-body: #020617;
+      --bg-panel: #020617;
+      --bg-elevated: #020617;
+      --bg-sidebar: #020617;
+      --bg-input: #020617;
+      --accent-soft-1: #38bdf8;
+      --accent-soft-2: #6366f1;
+      --accent-soft-3: #f97373;
+      --text-main: #e5e7eb;
+      --text-muted: #6b7280;
+      --scrollbar: #4b5563;
     }
-    :root[data-theme=orange]{
-      --bg-body:#1a0f00;--bg-panel:#2a1a00;--border:rgba(255,122,0,.4);--text-main:#fff7ed;--text-muted:#fed7aa;
-      --accent:#ff7a00;--accent2:#fb923c;--accent3:#f97316;
-      --btn-bg:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2));
-      --btn-text:#1a0f00;--btn-border:rgba(255,122,0,.7);--chip-bg:#3b1f00;--chip-border:rgba(255,122,0,.6)
+
+    [data-theme="orange"] {
+      --bg-body: #111827;
+      --bg-panel: #111827;
+      --bg-elevated: #111827;
+      --bg-sidebar: #111827;
+      --bg-input: #111827;
+      --accent-soft-1: #fb923c;
+      --accent-soft-2: #f97316;
+      --accent-soft-3: #f97373;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --scrollbar: #f97316;
     }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
-      background:var(--bg-body);color:var(--text-main);height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden
+
+    [data-theme="bloom"] {
+      --bg-body: #0b1020;
+      --bg-panel: #0b1020;
+      --bg-elevated: #0b1020;
+      --bg-sidebar: #0b1020;
+      --bg-input: #0b1020;
+      --accent-soft-1: #ec4899;
+      --accent-soft-2: #a855f7;
+      --accent-soft-3: #f97373;
+      --text-main: #fdf2f8;
+      --text-muted: #f9a8d4;
+      --scrollbar: #ec4899;
     }
-    .glow-orbit{
-      position:fixed;inset:-20%;
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-main);
       background:
-        radial-gradient(circle at 10% 0%,rgba(249,115,22,.18),transparent 55%),
-        radial-gradient(circle at 90% 0%,rgba(236,72,153,.18),transparent 55%),
-        radial-gradient(circle at 0% 80%,rgba(56,189,248,.16),transparent 55%),
-        radial-gradient(circle at 100% 80%,rgba(129,140,248,.16),transparent 55%);
-      filter:blur(2px);z-index:-2
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.18), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.18), transparent 55%),
+        var(--bg-body);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 10px;
     }
-    .glass-shell{
-      width:100%;max-width:1180px;height:88vh;background:rgba(15,23,42,.88);
-      border-radius:22px;border:1px solid var(--border);
-      box-shadow:0 30px 80px rgba(15,23,42,.95),0 0 0 1px rgba(15,23,42,.9);
-      overflow:hidden;display:flex;position:relative
+
+    ::-webkit-scrollbar {
+      width: 8px;
     }
-    .hidden{display:none!important}
-    .auth-shell{
-      width:420px;max-width:100%;background:var(--bg-panel);border-radius:22px;border:1px solid var(--border);
-      padding:26px 24px 22px;box-shadow:0 26px 70px rgba(15,23,42,.95),0 0 0 1px rgba(15,23,42,.9)
+    ::-webkit-scrollbar-track {
+      background: transparent;
     }
-    .auth-header{text-align:center;margin-bottom:18px}
-    .logo-text{
-      font-size:26px;letter-spacing:.35em;text-transform:uppercase;
-      background:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2),#22c55e);
-      -webkit-background-clip:text;color:transparent;font-weight:700;margin-bottom:4px
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar);
+      border-radius: 999px;
     }
-    .auth-subtitle{font-size:13px;color:var(--text-muted)}
-    .auth-toggle{
-      display:flex;margin-bottom:18px;background:var(--chip-bg);border-radius:999px;padding:3px;border:1px solid var(--chip-border)
+
+    .app-shell {
+      width: 100%;
+      max-width: 1240px;
+      height: 100%;
+      max-height: 720px;
+      border-radius: 28px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: radial-gradient(circle at top, var(--bg-panel), var(--bg-body));
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.95);
+      position: relative;
+      backdrop-filter: blur(24px);
     }
-    .auth-toggle button{
-      flex:1;border-radius:999px;border:none;padding:7px 0;font-size:13px;cursor:pointer;background:transparent;color:var(--text-muted);
-      transition:all .18s ease
+
+    .app-header {
+      padding: 10px 18px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(
+        135deg,
+        var(--bg-sidebar),
+        var(--bg-elevated)
+      );
+      position: relative;
+      z-index: 2;
     }
-    .auth-toggle button.active{
-      background:var(--btn-bg);color:var(--btn-text);font-weight:600;box-shadow:0 0 18px rgba(236,72,153,.7)
+
+    .app-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .auth-form{display:flex;flex-direction:column;gap:10px;margin-top:4px}
-    .field-label{font-size:12px;color:var(--text-muted);margin-bottom:3px}
-    .auth-form input{
-      width:100%;padding:8px 10px;border-radius:9px;border:1px solid var(--border);
-      background:var(--bg-body);color:var(--text-main);font-size:13px;outline:none;
-      transition:border .15s ease,box-shadow .15s ease,background .15s ease
+
+    .logo-core {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, var(--grad1), var(--grad2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.9);
     }
-    .auth-form input:focus{
-      border-color:var(--accent);box-shadow:0 0 0 1px rgba(236,72,153,.7);background:var(--bg-body)
+
+    .logo-core::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, #020617, #020617);
     }
-    .auth-submit{
-      margin-top:6px;padding:9px 0;border-radius:999px;border:none;cursor:pointer;font-size:14px;font-weight:600;
-      background:var(--btn-bg);color:var(--btn-text);box-shadow:0 0 22px rgba(236,72,153,.7);
-      transition:transform .12s ease,box-shadow .12s ease,filter .12s ease
+
+    .logo-core span {
+      position: relative;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      color: #e5e7eb;
     }
-    .auth-submit:hover{
-      transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 0 26px rgba(236,72,153,.9)
+
+    .app-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
-    .auth-error{margin-top:6px;font-size:12px;color:#f97373;min-height:16px}
-    .sidebar{
-      width:260px;background:var(--bg-panel);border-right:1px solid rgba(30,64,175,.7);display:flex;flex-direction:column
+
+    .app-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
     }
-    .sidebar-header{
-      padding:14px 14px 10px;border-bottom:1px solid rgba(30,64,175,.7);display:flex;align-items:center;justify-content:space-between
+
+    .app-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
     }
-    .sidebar-logo{
-      font-size:16px;letter-spacing:.25em;text-transform:uppercase;
-      background:linear-gradient(90deg,var(--accent3),var(--accent),var(--accent2),#22c55e);
-      -webkit-background-clip:text;color:transparent;font-weight:700
+
+    .app-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .sidebar-section-title{
-      font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);padding:10px 14px 4px
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--bg-sidebar);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
     }
-    .channel-list{padding:4px 6px 8px;display:flex;flex-direction:column;gap:2px}
-    .channel-item{
-      display:flex;align-items:center;gap:6px;padding:6px 8px;margin:0 4px;border-radius:8px;font-size:13px;color:var(--text-muted);
-      cursor:pointer;transition:background .12s ease,color .12s ease
+
+    .user-avatar {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, var(--grad1), var(--grad2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #020617;
+      overflow: hidden;
     }
-    .channel-item.active{background:rgba(37,99,235,.2);color:var(--text-main)}
-    .channel-hash{color:var(--text-muted);font-size:14px}
-    .user-panel{
-      margin-top:auto;padding:8px 10px;border-top:1px solid rgba(30,64,175,.7);display:flex;align-items:center;gap:8px
+
+    .user-avatar-dot {
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 2px solid #020617;
+      background: #4b5563;
     }
-    .user-avatar{
-      position:relative;width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;
-      font-size:14px;font-weight:700;color:#fff;overflow:hidden;
-      background:radial-gradient(circle at top,var(--grad1),var(--grad2),var(--grad3))
+
+    .status-online {
+      background: #22c55e !important;
     }
-    .status-dot{
-      position:absolute;width:10px;height:10px;border-radius:999px;border:2px solid #020617;bottom:1px;right:1px;background:#6b7280
+    .status-away {
+      background: #facc15 !important;
     }
-    .status-online{background:#22c55e}
-    .status-away{background:#eab308}
-    .status-offline{background:#6b7280}
-    .user-meta{flex:1;display:flex;flex-direction:column;gap:2px}
-    .user-name{font-size:13px;font-weight:500;display:flex;align-items:center;gap:4px}
-    .user-status{font-size:11px;color:var(--text-muted)}
-    .user-actions{display:flex;flex-direction:column;gap:4px}
-    .user-actions button{
-      border:1px solid var(--btn-border);border-radius:999px;padding:3px 8px;font-size:11px;cursor:pointer;
-      background:var(--chip-bg);color:var(--text-main);
-      transition:background .12s ease,color .12s ease,border .12s ease,box-shadow .12s ease
+    .status-offline {
+      background: #4b5563 !important;
     }
-    .user-actions button:hover{
-      background:rgba(248,250,252,.1);border-color:var(--accent);color:#f9fafb;box-shadow:0 0 10px rgba(236,72,153,.6)
+
+    .user-pill-text {
+      display: flex;
+      flex-direction: column;
     }
-    .main{flex:1;display:flex;flex-direction:column;background:var(--bg-body)}
-    .main-header{
-      height:48px;border-bottom:1px solid rgba(30,64,175,.7);display:flex;align-items:center;justify-content:space-between;padding:0 14px
+
+    .user-pill-name {
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
-    .channel-title{display:flex;align-items:center;gap:8px;font-size:14px}
-    .channel-title span.hash{color:var(--text-muted);font-size:18px}
-    .channel-subtitle{font-size:11px;color:var(--text-muted)}
-    .header-user{font-size:12px;color:var(--text-muted)}
-    .main-body{flex:1;display:flex;min-height:0}
-    .chat-column{flex:1;display:flex;flex-direction:column;min-width:0}
-    .messages{
-      flex:1;padding:10px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth
+
+    .user-pill-status {
+      font-size: 11px;
+      color: var(--text-muted);
     }
-    .message{display:flex;gap:8px;font-size:13px;position:relative}
-    .message-avatar{
-      width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;
-      font-size:13px;font-weight:600;color:#fff;flex-shrink:0;background:#020617
+
+    .admin-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(96, 165, 250, 0.12);
+      border: 1px solid rgba(96, 165, 250, 0.7);
+      color: #bfdbfe;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
-    .message-body{display:flex;flex-direction:column;gap:4px;flex:1}
-    .message-header{display:flex;align-items:baseline;gap:6px;position:relative}
-    .message-username{font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:4px}
-    .message-timestamp{font-size:10px;color:var(--text-muted)}
-    .message-text{font-size:13px;color:var(--text-main);white-space:pre-wrap;word-wrap:break-word}
-    .reply-btn{
-      margin-left:auto;font-size:11px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;opacity:0;
-      padding:0 4px;transition:opacity .12s ease,color .12s ease
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .message:hover .reply-btn{opacity:1}
-    .reply-btn:hover{color:var(--accent)}
-    .admin-delete-btn{
-      font-size:11px;border:none;background:transparent;color:#f97373;cursor:pointer;opacity:0;padding:0 4px;margin-left:4px;
-      transition:opacity .12s ease,color .12s ease
+
+    .header-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: var(--bg-sidebar);
+      color: var(--text-main);
+      font-size: 11px;
+      padding: 5px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
     }
-    .message:hover .admin-delete-btn{opacity:1}
-    .admin-delete-btn:hover{color:#fecaca}
-    .reply-preview{
-      display:flex;align-items:center;font-size:11px;color:var(--text-muted);margin-bottom:2px;max-width:100%;
-      overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+
+    .header-btn:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-elevated);
+      transform: translateY(-1px);
     }
-    .reply-preview-bar{
-      width:4px;border-radius:999px;margin-right:6px;align-self:stretch;
-      background:linear-gradient(180deg,#f97316,#ec4899,#6366f1)
+
+    .header-btn-muted {
+      opacity: 0.6;
     }
-    .reply-preview-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .reply-preview-text strong{font-weight:600;color:var(--text-main)}
-    .input-bar{
-      border-top:1px solid rgba(30,64,175,.7);padding:8px 10px;display:flex;flex-direction:column;gap:6px;background:var(--bg-panel)
+
+    .logout-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(248, 113, 113, 0.7);
+      background: rgba(127, 29, 29, 0.9);
+      color: #fee2e2;
+      font-size: 11px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease;
     }
-    .reply-bar{display:flex;align-items:center;font-size:11px;color:var(--text-muted)}
-    .reply-bar-inner{
-      display:flex;align-items:center;gap:6px;background:var(--chip-bg);border-radius:10px;border:1px solid var(--chip-border);
-      padding:4px 8px;max-width:100%
+
+    .logout-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(153, 27, 27, 0.95);
     }
-    .reply-bar-gradient{
-      width:4px;border-radius:999px;align-self:stretch;
-      background:linear-gradient(180deg,#f97316,#ec4899,#6366f1)
+
+    .app-main {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      position: relative;
+      z-index: 1;
+      padding: 10px 12px 14px;
+      gap: 10px;
     }
-    .reply-bar-text{flex:1;overflow:hidden}
-    .reply-bar-title{font-size:11px;color:var(--text-main);margin-bottom:1px}
-    .reply-bar-snippet{
-      font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+
+    .sidebar {
+      width: 250px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: var(--bg-sidebar);
+      border-radius: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
     }
-    .reply-bar-cancel{
-      border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0 4px
+
+    .sidebar-section {
+      padding: 10px 12px 8px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+      background: var(--bg-sidebar);
     }
-    .reply-bar-cancel:hover{color:var(--accent)}
-    .input-row{display:flex;gap:8px;align-items:center}
-    .input-wrapper{
-      flex:1;background:var(--chip-bg);border-radius:999px;border:1px solid var(--chip-border);
-      display:flex;align-items:center;padding:4px 10px;gap:8px;position:relative
+
+    .sidebar-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
     }
-    .input-wrapper input{
-      flex:1;border:none;background:transparent;color:var(--text-main);font-size:13px;outline:none
+
+    .channel-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
-    .send-btn{
-      border-radius:999px;border:none;padding:7px 14px;font-size:13px;cursor:pointer;background:var(--btn-bg);color:var(--btn-text);
-      font-weight:600;box-shadow:0 0 18px rgba(236,72,153,.7);
-      transition:transform .12s ease,box-shadow .12s ease,filter .12s ease
+
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 9px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.12s ease, color 0.12s ease, transform 0.08s ease;
     }
-    .send-btn:hover{
-      transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 0 22px rgba(236,72,153,.9)
+
+    .channel-item:hover {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      transform: translateY(-1px);
     }
-    .userlist-column{
-      width:220px;border-left:1px solid rgba(30,64,175,.7);background:var(--bg-panel);display:flex;flex-direction:column
+
+    .channel-item.active {
+      background: var(--bg-elevated);
+      color: #f9fafb;
+      border: 1px solid rgba(96, 165, 250, 0.8);
     }
-    .userlist-header{
-      padding:8px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);
-      border-bottom:1px solid rgba(30,64,175,.7)
+
+    .channel-hash {
+      color: rgba(156, 163, 175, 0.9);
     }
-    .userlist{
-      flex:1;overflow-y:auto;padding:6px 8px;display:flex;flex-direction:column;gap:4px
+
+    .userlist-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: var(--bg-sidebar);
     }
-    .userlist-item{
-      display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:8px;font-size:13px;color:var(--text-main);
-      cursor:default;transition:background .12s ease,color .12s ease
+
+    .userlist-header {
+      padding: 8px 10px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
     }
-    .userlist-item:hover{background:rgba(37,99,235,.2)}
-    .userlist-avatar-wrap{position:relative;width:26px;height:26px;flex-shrink:0}
-    .userlist-avatar{
-      width:26px;height:26px;border-radius:999px;display:flex;align-items:center;justify-content:center;
-      font-size:12px;font-weight:600;color:#fff;background:#020617
+
+    .userlist {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    .userlist-status-dot{
-      position:absolute;width:9px;height:9px;border-radius:999px;border:2px solid #020617;bottom:-1px;right:-1px;background:#6b7280
+
+    .userlist-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 7px;
+      border-radius: 999px;
+      background: transparent;
+      cursor: default;
+      transition: background 0.12s ease, transform 0.08s ease;
     }
-    .userlist-status-dot.status-online{background:#22c55e}
-    .userlist-status-dot.status-away{background:#eab308}
-    .userlist-status-dot.status-offline{background:#6b7280}
-    .userlist-name{font-size:13px;display:inline-flex;align-items:center;gap:4px}
-    .userlist-status-text{font-size:11px;color:var(--text-muted)}
-    #edit-profile-modal.hidden,#appearance-modal.hidden,#admin-modal.hidden,#changelog-modal.hidden{display:none}
-    .admin-tag{
-      font-size:10px;padding:1px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;
-      background:linear-gradient(90deg,#f97316,#ec4899,#6366f1,#22c55e,#f97316);background-size:300% 100%;
-      color:#020617;animation:admin-rainbow 3s linear infinite;border:1px solid rgba(15,23,42,.7)
+
+    .userlist-item:hover {
+      background: var(--bg-elevated);
+      transform: translateY(-1px);
     }
-    @keyframes admin-rainbow{
-      0%{background-position:0 50%}
-      50%{background-position:100% 50%}
-      100%{background-position:0 50%}
+
+    .userlist-avatar-wrap {
+      position: relative;
+      width: 28px;
+      height: 28px;
     }
-    /* mention highlight */
-    .mention-highlight{
-      background:linear-gradient(90deg,rgba(236,72,153,.12),rgba(37,99,235,.12));
-      border-radius:8px;padding:2px 4px
+
+    .userlist-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #020617;
+      background: radial-gradient(circle at top, var(--grad1), var(--grad2));
     }
-    .mention-badge{
-      font-size:10px;padding:1px 5px;border-radius:999px;background:rgba(236,72,153,.2);color:var(--accent);
-      margin-left:4px
+
+    .userlist-status-dot {
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 2px solid var(--bg-body);
+      background: #4b5563;
     }
-    /* mention dropdown */
-    .mention-dropdown{
-      position:absolute;bottom:110%;left:10px;right:10px;
-      background:var(--bg-panel);border-radius:10px;border:1px solid var(--chip-border);
-      box-shadow:0 18px 40px rgba(15,23,42,.9);padding:4px 0;z-index:50;max-height:180px;overflow-y:auto
+
+    .userlist-name {
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
-    .mention-item{
-      padding:4px 10px;font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;
-      color:var(--text-main);transition:background .12s ease
+
+    .userlist-status-text {
+      font-size: 11px;
+      color: var(--text-muted);
     }
-    .mention-item:hover,.mention-item.active{background:rgba(37,99,235,.25)}
-    .mention-item-name{font-weight:500}
-    .mention-item-status{font-size:11px;color:var(--text-muted)}
-    /* char cap UI */
-    .char-cap-row{
-      display:flex;justify-content:flex-end;font-size:11px;color:var(--text-muted);margin-top:2px
+
+    .main-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      background: var(--bg-panel);
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
     }
-    .char-cap-value{transition:color .12s ease}
-    .char-cap-warn{color:#facc15}
-    .char-cap-danger{color:#f97373}
-    /* changelog modal */
-    .modal-backdrop{
-      position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999
+
+    .channel-header {
+      padding: 10px 16px 8px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: var(--bg-sidebar);
     }
-    .modal-panel{
-      background:var(--bg-panel);padding:18px;border-radius:12px;width:420px;max-height:80vh;display:flex;flex-direction:column;
-      gap:10px;color:var(--text-main);border:1px solid var(--border);overflow:hidden
+
+    .channel-header-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .modal-panel h3{margin:0;font-size:18px}
-    .changelog-body{
-      font-size:13px;color:var(--text-main);border-radius:10px;border:1px solid var(--chip-border);
-      background:var(--chip-bg);padding:10px;max-height:50vh;overflow-y:auto
+
+    .channel-name {
+      font-size: 15px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .changelog-entry{margin-bottom:8px}
-    .changelog-entry-title{font-weight:600;margin-bottom:2px}
-    .changelog-entry-body{font-size:12px;color:var(--text-muted)}
-    .modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}
-    .btn-secondary{
-      padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-main);cursor:pointer;font-size:13px
+
+    .channel-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
     }
-    .btn-primary{
-      padding:6px 12px;border-radius:6px;border:none;background:var(--btn-bg);color:var(--btn-text);cursor:pointer;font-size:13px;font-weight:600;
-      box-shadow:0 0 16px rgba(236,72,153,.7)
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 16px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: radial-gradient(circle at top, var(--bg-panel), var(--bg-body));
     }
-    .btn-primary[disabled]{opacity:.5;cursor:not-allowed;box-shadow:none}
+
+    .message {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+      padding: 2px 0;
+    }
+
+    .message-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #020617;
+      margin-top: 2px;
+      background: radial-gradient(circle at top, var(--grad1), var(--grad2));
+      flex-shrink: 0;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.9);
+    }
+
+    .message-body {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      max-width: 100%;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .message-username {
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .message-timestamp {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .message-text {
+      font-size: 13px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      padding: 8px 11px;
+      border-radius: var(--radius-bubble);
+      background: var(--bg-elevated);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: var(--text-main);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
+      transition: border-color 0.12s ease, background 0.12s ease, transform 0.08s ease;
+    }
+
+    .message-text a {
+      color: #93c5fd;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+    }
+
+    .message-text:hover {
+      border-color: rgba(96, 165, 250, 0.9);
+      background: var(--bg-sidebar);
+      transform: translateY(-1px);
+    }
+
+    .message-grouped {
+      margin-left: 44px;
+    }
+
+    .reply-preview {
+      display: flex;
+      align-items: stretch;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 3px;
+      background: var(--bg-elevated);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    .reply-preview-bar {
+      width: 4px;
+    }
+
+    .reply-preview-text {
+      padding: 4px 7px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .reply-btn,
+    .admin-delete-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 2px 7px;
+      cursor: pointer;
+      transition: border-color 0.12s ease, color 0.12s ease, transform 0.08s ease, background 0.12s ease;
+    }
+
+    .reply-btn:hover {
+      border-color: var(--border-strong);
+      color: #bfdbfe;
+      transform: translateY(-1px);
+      background: var(--bg-sidebar);
+    }
+
+    .admin-delete-btn {
+      margin-left: 4px;
+      border-color: rgba(248, 113, 113, 0.7);
+      color: #fecaca;
+    }
+
+    .admin-delete-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(69, 10, 10, 0.9);
+    }
+
+    .mention-highlight .message-text {
+      background: rgba(30, 64, 175, 0.35);
+      border-color: rgba(96, 165, 250, 0.95);
+    }
+
+    .input-area {
+      border-top: 1px solid rgba(31, 41, 55, 0.8);
+      padding: 8px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: var(--bg-sidebar);
+      position: relative;
+    }
+
+    .reply-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 9px;
+      border-radius: 16px;
+      background: var(--bg-elevated);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      font-size: 12px;
+    }
+
+    .reply-bar-gradient {
+      width: 4px;
+      align-self: stretch;
+      border-radius: 999px;
+    }
+
+    .reply-bar-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .reply-bar-title {
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .reply-bar-snippet {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .reply-bar-cancel {
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 3px 7px;
+      cursor: pointer;
+      transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease, transform 0.08s ease;
+    }
+
+    .reply-bar-cancel:hover {
+      border-color: var(--border-strong);
+      color: #bfdbfe;
+      background: var(--bg-elevated);
+      transform: translateY(-1px);
+    }
+
+    .input-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      position: relative;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      background: var(--bg-input);
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
+    }
+
+    .input-wrapper textarea {
+      flex: 1;
+      border: none;
+      outline: none;
+      resize: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 13px;
+      max-height: 80px;
+    }
+
+    .input-wrapper textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    .send-btn {
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-soft-1), var(--accent-soft-2));
+      color: #020617;
+      font-size: 13px;
+      padding: 8px 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      transition: transform 0.12s ease, filter 0.12s ease, opacity 0.12s ease;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
+    }
+
+    .send-btn:hover:not(.disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .send-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      filter: grayscale(1);
+      box-shadow: none;
+    }
+
+    .char-cap-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+
+    .char-cap-value {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--bg-elevated);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    #timeout-row {
+      color: var(--danger);
+      font-weight: 500;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .auth-view {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      padding: 10px 12px 14px;
+      gap: 10px;
+    }
+
+    .auth-left {
+      flex: 1;
+      padding: 32px 28px;
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.18), transparent 55%), var(--bg-panel);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .auth-title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .auth-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 360px;
+    }
+
+    .auth-right {
+      width: 360px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: var(--bg-panel);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .auth-toggle {
+      display: flex;
+      border-radius: 999px;
+      padding: 3px;
+      background: var(--bg-sidebar);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      gap: 3px;
+    }
+
+    .auth-toggle button {
+      flex: 1;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 7px 0;
+      cursor: pointer;
+      transition: background 0.12s ease, color 0.12s ease, transform 0.08s ease;
+    }
+
+    .auth-toggle button.active {
+      background: linear-gradient(135deg, var(--accent-soft-1), var(--accent-soft-2));
+      color: #020617;
+      font-weight: 600;
+      transform: translateY(-1px);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .auth-form label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .auth-form input {
+      width: 100%;
+      padding: 8px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: var(--bg-sidebar);
+      color: var(--text-main);
+      font-size: 13px;
+    }
+
+    .auth-form input:focus {
+      outline: none;
+      border-color: var(--border-strong);
+    }
+
+    .auth-submit {
+      margin-top: 6px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-soft-1), var(--accent-soft-2));
+      color: #020617;
+      font-size: 13px;
+      padding: 8px 0;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+
+    .auth-submit:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .auth-error {
+      font-size: 11px;
+      color: #fecaca;
+      min-height: 14px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-panel {
+      background: var(--bg-panel);
+      padding: 20px;
+      border-radius: 20px;
+      width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--text-main);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
+    }
+
+    .modal-panel-wide {
+      width: 520px;
+      max-height: 80vh;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .modal-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: transparent;
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+    }
+
+    .modal-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .modal-btn-primary {
+      background: linear-gradient(135deg, var(--accent-soft-1), var(--accent-soft-2));
+      border: none;
+      color: #020617;
+      font-weight: 600;
+    }
+
+    .modal-input {
+      padding: 8px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: var(--bg-sidebar);
+      color: var(--text-main);
+      font-size: 13px;
+    }
+
+    .modal-input:focus {
+      outline: none;
+      border-color: var(--border-strong);
+    }
+
+    .modal-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .admin-users-container {
+      margin-top: 4px;
+      border-radius: 16px;
+      border: 1px solid var(--chip-border);
+      background: var(--chip-bg);
+      padding: 8px;
+      max-height: 60vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mention-dropdown {
+      position: absolute;
+      bottom: 100%;
+      left: 10px;
+      margin-bottom: 8px;
+      min-width: 220px;
+      max-height: 200px;
+      overflow-y: auto;
+      border-radius: 16px;
+      background: var(--bg-panel);
+      border: 1px solid rgba(96, 165, 250, 0.8);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+      z-index: 20;
+      padding: 4px;
+      backdrop-filter: blur(18px);
+    }
+
+    .mention-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 7px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-main);
+      transition: background 0.12s ease, transform 0.08s ease;
+    }
+
+    .mention-item:hover,
+    .mention-item.active {
+      background: var(--bg-elevated);
+      transform: translateY(-1px);
+    }
+
+    .mention-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #020617;
+      background: radial-gradient(circle at top, var(--grad1), var(--grad2));
+    }
+
+    .mention-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mention-name {
+      font-size: 12px;
+    }
+
+    .mention-email {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 0;
+      }
+      .app-shell {
+        max-height: none;
+        height: 100vh;
+        border-radius: 0;
+      }
+      .app-main,
+      .auth-view {
+        padding: 8px;
+      }
+      .sidebar {
+        display: none;
+      }
+      .main-column,
+      .auth-left,
+      .auth-right {
+        border-radius: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="glow-orbit"></div>
-
-  <!-- AUTH VIEW -->
-  <div id="auth-view" class="auth-shell">
-    <div class="auth-header">
-      <div class="logo-text">R A D I A N T</div>
-      <div class="auth-subtitle">Sign in or create an account to chat</div>
-    </div>
-
-    <div class="auth-toggle">
-      <button id="toggle-login" class="active">Login</button>
-      <button id="toggle-signup">Sign up</button>
-    </div>
-
-    <form id="login-form" class="auth-form">
-      <div>
-        <div class="field-label">Email</div>
-        <input type="email" id="login-email" placeholder="you@example.com" required />
-      </div>
-      <div>
-        <div class="field-label">Password</div>
-        <input type="password" id="login-password" placeholder="••••••••" required />
-      </div>
-      <button type="submit" class="auth-submit">Login</button>
-      <div id="login-error" class="auth-error"></div>
-    </form>
-
-    <form id="signup-form" class="auth-form hidden">
-      <div>
-        <div class="field-label">Email</div>
-        <input type="email" id="signup-email" placeholder="you@example.com" required />
-      </div>
-      <div>
-        <div class="field-label">Password</div>
-        <input type="password" id="signup-password" placeholder="••••••••" required />
-      </div>
-      <div>
-        <div class="field-label">Username</div>
-        <input type="text" id="signup-username" placeholder="RadiantFox" required />
-      </div>
-      <div>
-        <div class="field-label">Custom status</div>
-        <input type="text" id="signup-status" placeholder="Chilling in RADIANT" />
-      </div>
-      <button type="submit" class="auth-submit">Create account</button>
-      <div id="signup-error" class="auth-error"></div>
-    </form>
-  </div>
-
-  <!-- APP VIEW -->
-  <div id="app-view" class="glass-shell hidden">
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-logo">R A D I A N T</div>
-      </div>
-
-      <div class="sidebar-section-title">Channels</div>
-      <div class="channel-list">
-        <div class="channel-item active" data-channel-id="uni-general">
-          <span class="channel-hash">#</span>
-          <span>universal</span>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="app-header-left">
+        <div class="logo-core">
+          <span>R</span>
+        </div>
+        <div class="app-title-block">
+          <div class="app-title">RADIANT</div>
+          <div class="app-subtitle">Cosy, rounded, Discord‑style chat with channels & presence</div>
         </div>
       </div>
-
-      <div class="user-panel">
-        <div class="user-avatar" id="user-avatar">
-          <span id="user-avatar-initials">R</span>
-          <span id="user-avatar-dot" class="status-dot status-offline"></span>
-        </div>
-        <div class="user-meta">
-          <div class="user-name" id="user-email">User</div>
-          <div class="user-status" id="user-status">Offline</div>
-        </div>
-        <div class="user-actions">
-          <button id="edit-profile-btn">Edit</button>
-          <button id="appearance-btn">Appearance</button>
-          <button id="admin-btn" class="hidden">Admin</button>
-          <button id="logout-btn">Logout</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="main">
-      <div class="main-header">
-        <div>
-          <div class="channel-title">
-            <span class="hash">#</span>
-            <span id="channel-name">universal</span>
+      <div class="app-header-right">
+        <div class="user-pill">
+          <div class="user-avatar">
+            <span id="user-avatar-initials">R</span>
+            <div id="user-avatar-dot" class="user-avatar-dot status-offline"></div>
           </div>
-          <div class="channel-subtitle" id="channel-subtitle">
-            Global chat for everyone in RADIANT
-          </div>
-        </div>
-        <div class="header-user">
-          Signed in as <span id="header-user-email">User</span>
-        </div>
-      </div>
-
-      <div class="main-body">
-        <div class="chat-column">
-          <div id="messages" class="messages"></div>
-
-          <div class="input-bar">
-            <div id="reply-bar" class="reply-bar hidden">
-              <div class="reply-bar-inner">
-                <div id="reply-bar-gradient" class="reply-bar-gradient"></div>
-                <div class="reply-bar-text">
-                  <div id="reply-bar-title" class="reply-bar-title">Replying to</div>
-                  <div id="reply-bar-snippet" class="reply-bar-snippet"></div>
-                </div>
-                <button id="reply-bar-cancel" class="reply-bar-cancel">×</button>
-              </div>
+          <div class="user-pill-text">
+            <div class="user-pill-name">
+              <span id="user-email">User</span>
             </div>
-
-            <div class="input-row">
-              <div class="input-wrapper">
-                <input id="message-input" type="text" placeholder="Send a message to #universal" autocomplete="off" />
-                <div id="mention-dropdown" class="mention-dropdown hidden"></div>
-              </div>
-              <button id="send-btn" class="send-btn">Send</button>
-            </div>
-
-            <div class="char-cap-row">
-              <span id="char-cap" class="char-cap-value">0 / 1000</span>
+            <div class="user-pill-status">
+              <span id="user-status">Offline</span>
             </div>
           </div>
         </div>
+        <div class="header-buttons">
+          <button id="sound-toggle-btn" class="header-btn">
+            <span id="sound-toggle-label">Sound on</span>
+          </button>
+          <button id="edit-profile-btn" class="header-btn">Profile</button>
+          <button id="appearance-btn" class="header-btn">Appearance</button>
+          <button id="admin-btn" class="header-btn hidden">Admin</button>
+          <button id="logout-btn" class="logout-btn">Logout</button>
+        </div>
+      </div>
+    </header>
 
+    <!-- AUTH VIEW -->
+    <div id="auth-view" class="auth-view">
+      <div class="auth-left">
+        <div class="auth-title">Welcome to RADIANT</div>
+        <div class="auth-subtitle">
+          A softer, rounded Discord‑style chat with multiple channels, presence, mentions, and admin tools.
+        </div>
+      </div>
+      <div class="auth-right">
+        <div class="auth-toggle">
+          <button id="toggle-login" class="active">Log in</button>
+          <button id="toggle-signup">Sign up</button>
+        </div>
+
+        <form id="login-form" class="auth-form">
+          <div>
+            <label>Email</label>
+            <input id="login-email" type="email" autocomplete="email" />
+          </div>
+          <div>
+            <label>Password</label>
+            <input id="login-password" type="password" autocomplete="current-password" />
+          </div>
+          <div class="auth-error" id="login-error"></div>
+          <button type="submit" class="auth-submit">Log in</button>
+        </form>
+
+        <form id="signup-form" class="auth-form hidden">
+          <div>
+            <label>Email</label>
+            <input id="signup-email" type="email" autocomplete="email" />
+          </div>
+          <div>
+            <label>Password</label>
+            <input id="signup-password" type="password" autocomplete="new-password" />
+          </div>
+          <div>
+            <label>Username</label>
+            <input id="signup-username" type="text" />
+          </div>
+          <div>
+            <label>Custom status (optional)</label>
+            <input id="signup-status" type="text" />
+          </div>
+          <div class="auth-error" id="signup-error"></div>
+          <button type="submit" class="auth-submit">Create account</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- APP VIEW -->
+    <div id="app-view" class="app-main hidden">
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Channels</div>
+          <div class="channel-list">
+            <div class="channel-item active" data-channel-id="uni-general">
+              <span class="channel-hash">#</span>
+              <span>universal</span>
+            </div>
+            <div class="channel-item" data-channel-id="image-links">
+              <span class="channel-hash">#</span>
+              <span>image-links</span>
+            </div>
+          </div>
+        </div>
         <div class="userlist-column">
           <div class="userlist-header">Users</div>
           <div id="user-list" class="userlist"></div>
         </div>
-      </div>
+      </aside>
+
+      <main class="main-column">
+        <div class="channel-header">
+          <div class="channel-header-top">
+            <div class="channel-name">
+              <span class="channel-hash">#</span>
+              <span id="channel-name">universal</span>
+            </div>
+          </div>
+          <div id="channel-subtitle" class="channel-subtitle">
+            Global chat for everyone in RADIANT
+          </div>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div class="input-area">
+          <div id="reply-bar" class="reply-bar hidden">
+            <div id="reply-bar-gradient" class="reply-bar-gradient"></div>
+            <div class="reply-bar-main">
+              <div id="reply-bar-title" class="reply-bar-title"></div>
+              <div id="reply-bar-snippet" class="reply-bar-snippet"></div>
+            </div>
+            <button id="reply-bar-cancel" class="reply-bar-cancel">Cancel</button>
+          </div>
+
+          <div class="input-row">
+            <div class="input-wrapper">
+              <textarea id="message-input" rows="1" placeholder="Message #universal"></textarea>
+              <div id="mention-dropdown" class="mention-dropdown hidden"></div>
+            </div>
+            <button id="send-btn" class="send-btn">
+              <span>Send</span>
+            </button>
+          </div>
+
+          <div class="char-cap-row">
+            <span id="char-cap" class="char-cap-value">0 / 1000</span>
+          </div>
+
+          <div id="timeout-row" class="char-cap-row hidden" style="justify-content:flex-start; gap:6px;">
+            <span style="font-size:12px;">⏱️</span>
+            <span id="timeout-text" style="font-size:12px;color:#f97373;"></span>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 
   <!-- EDIT PROFILE MODAL -->
-  <div id="edit-profile-modal" class="hidden modal-backdrop">
-    <div class="modal-panel" style="width:340px;">
-      <h3>Edit Profile</h3>
+  <div id="edit-profile-modal" class="modal-backdrop hidden">
+    <div class="modal-panel">
+      <h3 style="margin: 0; font-size: 18px;">Edit Profile</h3>
 
-      <label style="font-size:13px;">Username</label>
-      <input id="edit-username" type="text" style="padding:8px;border-radius:6px;border:none;background:var(--bg-body);color:var(--text-main);">
+      <label class="modal-label">Username</label>
+      <input id="edit-username" type="text" class="modal-input">
 
-      <label style="font-size:13px;">Custom status</label>
-      <input id="edit-status" type="text" style="padding:8px;border-radius:6px;border:none;background:var(--bg-body);color:var(--text-main);">
+      <label class="modal-label">Custom status</label>
+      <input id="edit-status" type="text" class="modal-input">
 
-      <label style="font-size:13px;margin-top:6px;">Gradient Color 1</label>
-      <input id="edit-grad1" type="color" style="width:60px;height:32px;padding:0;border-radius:6px;border:1px solid var(--border);background:transparent;">
+      <label class="modal-label" style="margin-top: 6px;">Gradient Color 1</label>
+      <input id="edit-grad1" type="color" style="width: 60px; height: 32px; padding: 0; border-radius: 999px; border: 1px solid var(--border-soft); background: transparent;">
 
-      <label style="font-size:13px;">Gradient Color 2</label>
-      <input id="edit-grad2" type="color" style="width:60px;height:32px;padding:0;border-radius:6px;border:1px solid(var(--border));background:transparent;">
+      <label class="modal-label">Gradient Color 2</label>
+      <input id="edit-grad2" type="color" style="width: 60px; height: 32px; padding: 0; border-radius: 999px; border: 1px solid var(--border-soft); background: transparent;">
 
-      <label style="font-size:13px;">Gradient Color 3</label>
-      <input id="edit-grad3" type="color" style="width:60px;height:32px;padding:0;border-radius:6px;border:1px solid(var(--border));background:transparent;">
+      <label class="modal-label">Gradient Color 3</label>
+      <input id="edit-grad3" type="color" style="width: 60px; height: 32px; padding: 0; border-radius: 999px; border: 1px solid var(--border-soft); background: transparent;">
 
       <div class="modal-footer">
-        <button id="cancel-edit" class="btn-secondary">Cancel</button>
-        <button id="save-edit" class="btn-primary">Save</button>
+        <button id="cancel-edit" class="modal-btn">Cancel</button>
+        <button id="save-edit" class="modal-btn modal-btn-primary">Save</button>
       </div>
     </div>
   </div>
 
   <!-- APPEARANCE MODAL -->
-  <div id="appearance-modal" class="hidden modal-backdrop">
-    <div class="modal-panel" style="width:320px;">
-      <h3>Appearance</h3>
+  <div id="appearance-modal" class="modal-backdrop hidden">
+    <div class="modal-panel">
+      <h3 style="margin: 0; font-size: 18px;">Appearance</h3>
 
-      <label style="font-size:13px;">Theme</label>
-      <select id="theme-select" style="padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--bg-body);color:var(--text-main);">
+      <label class="modal-label">Theme</label>
+      <select id="theme-select" class="modal-input" style="padding-right: 24px;">
+        <option value="cosy-dark">Cosy Dark</option>
         <option value="dark">Dark</option>
         <option value="light">Light</option>
         <option value="midnight">Midnight</option>
@@ -510,44 +1348,78 @@
       </select>
 
       <div class="modal-footer">
-        <button id="close-appearance" class="btn-secondary">Close</button>
+        <button id="close-appearance" class="modal-btn">Close</button>
       </div>
     </div>
   </div>
 
   <!-- ADMIN MODAL -->
-  <div id="admin-modal" class="hidden modal-backdrop">
-    <div class="modal-panel" style="width:520px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h3>Admin Panel</h3>
-        <button id="admin-close" style="border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:18px;">×</button>
+  <div id="admin-modal" class="modal-backdrop hidden">
+    <div class="modal-panel modal-panel-wide">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin: 0; font-size: 18px;">Admin Panel</h3>
+        <button id="admin-close" style="
+          border:none;
+          background:transparent;
+          color:var(--text-muted);
+          cursor:pointer;
+          font-size:18px;
+        ">×</button>
       </div>
-      <div style="font-size:12px;color:var(--text-muted);">
+
+      <div style="font-size:12px; color:var(--text-muted);">
         Manage users in the tablist: timeouts, presence, and hide/show.
       </div>
-      <div id="admin-users-container" style="
-        margin-top:4px;border-radius:10px;border:1px solid var(--chip-border);
-        background:var(--chip-bg);padding:6px;max-height:60vh;overflow-y:auto;display:flex;flex-direction:column;gap:4px;
-      "></div>
+
+      <div id="admin-users-container" class="admin-users-container"></div>
     </div>
   </div>
 
   <!-- CHANGELOG MODAL -->
-  <div id="changelog-modal" class="hidden modal-backdrop">
-    <div class="modal-panel">
-      <h3>What’s new in RADIANT</h3>
-      <div class="changelog-body" id="changelog-body">
-        <!-- Filled by JS -->
+  <div id="changelog-modal" class="modal-backdrop hidden">
+    <div class="modal-panel modal-panel-wide">
+      <h3 style="margin:0;font-size:20px;">What’s New</h3>
+
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">
+        Recent improvements to your RADIANT experience
       </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:4px;">
+
+        <div style="padding:10px;border-radius:14px;background:var(--bg-elevated);border:1px solid var(--border-soft);">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;">✨ New UI</div>
+          <div style="font-size:13px;color:var(--text-muted);">
+            A fully revamped cosy, rounded interface with softer panels, improved readability, and a more Discord‑like layout.
+          </div>
+        </div>
+
+        <div style="padding:10px;border-radius:14px;background:var(--bg-elevated);border:1px solid var(--border-soft);">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🔔 Mention Pings & Sounds</div>
+          <div style="font-size:13px;color:var(--text-muted);">
+            Mentions now glow, highlight, and trigger a ping sound — with a toggle to mute them anytime.
+          </div>
+        </div>
+
+        <div style="padding:10px;border-radius:14px;background:var(--bg-elevated);border:1px solid var(--border-soft);">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;">📁 Another Channel</div>
+          <div style="font-size:13px;color:var(--text-muted);">
+            A new <strong>#image-links</strong> channel has been added for sharing image URLs and references.
+          </div>
+        </div>
+
+      </div>
+
       <div class="modal-footer">
-        <button id="changelog-close" class="btn-primary" disabled>Got it (5)</button>
+        <button id="changelog-close-btn" class="modal-btn modal-btn-primary" disabled>
+          Close (5)
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- mention ping sound (simple beep) -->
+  <!-- Mention / notification sound -->
   <audio id="mention-sound">
-    <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=" type="audio/wav">
+    <source src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" type="audio/ogg">
   </audio>
 
   <script type="module">
@@ -586,7 +1458,6 @@
     };
 
     const ADMIN_EMAIL = "adminsecret@orangefox.com";
-    const APP_VERSION = "1.1.0"; // bump when you change features
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -604,7 +1475,6 @@
 
     const logoutBtn = document.getElementById("logout-btn");
     const userEmailSpan = document.getElementById("user-email");
-    const headerUserEmailSpan = document.getElementById("header-user-email");
     const userStatusSpan = document.getElementById("user-status");
     const userAvatarInitials = document.getElementById("user-avatar-initials");
     const userAvatarDot = document.getElementById("user-avatar-dot");
@@ -612,6 +1482,7 @@
     const messagesEl = document.getElementById("messages");
     const messageInput = document.getElementById("message-input");
     const sendBtn = document.getElementById("send-btn");
+    const charCapEl = document.getElementById("char-cap");
 
     const editProfileBtn = document.getElementById("edit-profile-btn");
     const editProfileModal = document.getElementById("edit-profile-modal");
@@ -643,14 +1514,17 @@
     const adminClose = document.getElementById("admin-close");
     const adminUsersContainer = document.getElementById("admin-users-container");
 
+    const timeoutRow = document.getElementById("timeout-row");
+    const timeoutText = document.getElementById("timeout-text");
+
     const mentionDropdown = document.getElementById("mention-dropdown");
     const mentionSound = document.getElementById("mention-sound");
 
-    const charCapEl = document.getElementById("char-cap");
+    const soundToggleBtn = document.getElementById("sound-toggle-btn");
+    const soundToggleLabel = document.getElementById("sound-toggle-label");
 
     const changelogModal = document.getElementById("changelog-modal");
-    const changelogBody = document.getElementById("changelog-body");
-    const changelogClose = document.getElementById("changelog-close");
+    const changelogCloseBtn = document.getElementById("changelog-close-btn");
 
     let currentUserProfile = null;
     let currentChannelId = "uni-general";
@@ -667,34 +1541,39 @@
     const usersCache = new Map();
 
     let activeReply = null;
-    let lastMessageTime = 0; // cooldown tracker (2s between messages)
+    let lastMessageTime = 0;
+    let timeoutInterval = null;
 
-    // mention state
-    let mentionActive = false;
-    let mentionQuery = "";
-    let mentionCandidates = [];
-    let mentionSelectedIndex = 0;
-    let mentionTriggerIndex = -1;
+    let lastSeenMessageTime = 0;
+    let suppressMentionSound = true;
 
-    // changelog data (you can tweak this)
-    const CHANGELOG_ENTRIES = [
-      {
-        title: "Mentions & Pings",
-        body: "Type @ to mention users, with autocomplete, highlight, sound, and optional browser notifications."
-      },
-      {
-        title: "Message Limits",
-        body: "Messages are capped at 1000 characters with a live counter and a 2-second cooldown."
-      },
-      {
-        title: "Admin Presence Overrides",
-        body: "Admins can force presence states and timeouts from the Admin Panel."
-      },
-      {
-        title: "Changelog Modal",
-        body: "New features are announced on login with a short lockout so you don’t miss them."
+    const mentionState = {
+      open: false,
+      filter: "",
+      items: [],
+      activeIndex: 0,
+      triggerIndex: -1
+    };
+
+    let mentionMuted = localStorage.getItem("mentionMuted") === "1";
+
+    function updateSoundToggleUI() {
+      if (mentionMuted) {
+        soundToggleLabel.textContent = "Sound off";
+        soundToggleBtn.classList.add("header-btn-muted");
+      } else {
+        soundToggleLabel.textContent = "Sound on";
+        soundToggleBtn.classList.remove("header-btn-muted");
       }
-    ];
+    }
+
+    soundToggleBtn.addEventListener("click", () => {
+      mentionMuted = !mentionMuted;
+      localStorage.setItem("mentionMuted", mentionMuted ? "1" : "0");
+      updateSoundToggleUI();
+    });
+
+    updateSoundToggleUI();
 
     function setActiveReply(info) {
       if (!info) {
@@ -760,9 +1639,9 @@
     }
 
     function applyGradientVars(grad1, grad2, grad3) {
-      document.documentElement.style.setProperty("--grad1", grad1 || "#f97316");
-      document.documentElement.style.setProperty("--grad2", grad2 || "#ec4899");
-      document.documentElement.style.setProperty("--grad3", grad3 || "#6366f1");
+      document.documentElement.style.setProperty("--grad1", grad1 || "#60a5fa");
+      document.documentElement.style.setProperty("--grad2", grad2 || "#a855f7");
+      document.documentElement.style.setProperty("--grad3", grad3 || "#f97373");
     }
 
     function computeEffectivePresence(u) {
@@ -799,7 +1678,45 @@
       return Date.now() < ms;
     }
 
-    // auth toggle
+    function updateTimeoutUI() {
+      if (!currentUserProfile || !isTimedOut(currentUserProfile)) {
+        timeoutRow.classList.add("hidden");
+        sendBtn.classList.remove("disabled");
+        sendBtn.disabled = false;
+        if (timeoutInterval) clearInterval(timeoutInterval);
+        return;
+      }
+
+      timeoutRow.classList.remove("hidden");
+      sendBtn.classList.add("disabled");
+      sendBtn.disabled = true;
+
+      if (timeoutInterval) clearInterval(timeoutInterval);
+
+      function tick() {
+        const until = currentUserProfile.timeoutUntil;
+        const ms = typeof until === "number" ? until : until.toMillis();
+        const remaining = ms - Date.now();
+
+        if (remaining <= 0) {
+          timeoutRow.classList.add("hidden");
+          sendBtn.classList.remove("disabled");
+          sendBtn.disabled = false;
+          clearInterval(timeoutInterval);
+          return;
+        }
+
+        const sec = Math.floor(remaining / 1000);
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+
+        timeoutText.textContent = `You are timed out for ${m}:${s.toString().padStart(2, "0")}`;
+      }
+
+      tick();
+      timeoutInterval = setInterval(tick, 1000);
+    }
+
     toggleLogin.addEventListener("click", () => {
       toggleLogin.classList.add("active");
       toggleSignup.classList.remove("active");
@@ -838,9 +1755,9 @@
           presence: "online",
           lastActive: Date.now(),
           createdAt: Date.now(),
-          grad1: "#f97316",
-          grad2: "#ec4899",
-          grad3: "#6366f1",
+          grad1: "#60a5fa",
+          grad2: "#a855f7",
+          grad3: "#f97373",
           timeoutUntil: null,
           hidden: false,
           presenceOverride: false
@@ -872,9 +1789,9 @@
       if (!currentUserProfile) return;
       editUsernameInput.value = currentUserProfile.username || "";
       editStatusInput.value = currentUserProfile.customStatus || "";
-      editGrad1Input.value = currentUserProfile.grad1 || "#f97316";
-      editGrad2Input.value = currentUserProfile.grad2 || "#ec4899";
-      editGrad3Input.value = currentUserProfile.grad3 || "#6366f1";
+      editGrad1Input.value = currentUserProfile.grad1 || "#60a5fa";
+      editGrad2Input.value = currentUserProfile.grad2 || "#a855f7";
+      editGrad3Input.value = currentUserProfile.grad3 || "#f97373";
       editProfileModal.classList.remove("hidden");
     });
 
@@ -888,9 +1805,9 @@
 
       const newUsername = editUsernameInput.value.trim() || user.email;
       const newCustomStatus = editStatusInput.value.trim() || "";
-      const newGrad1 = editGrad1Input.value || "#f97316";
-      const newGrad2 = editGrad2Input.value || "#ec4899";
-      const newGrad3 = editGrad3Input.value || "#6366f1";
+      const newGrad1 = editGrad1Input.value || "#60a5fa";
+      const newGrad2 = editGrad2Input.value || "#a855f7";
+      const newGrad3 = editGrad3Input.value || "#f97373";
 
       try {
         await setDoc(doc(db, "users", user.uid), {
@@ -922,6 +1839,7 @@
         userAvatarInitials.textContent = initialsFromName(currentUserProfile.username);
         applyGradientVars(currentUserProfile.grad1, currentUserProfile.grad2, currentUserProfile.grad3);
         applyOwnPresence(currentUserProfile.presence);
+        updateTimeoutUI();
 
         editProfileModal.classList.add("hidden");
       } catch (err) {
@@ -944,27 +1862,53 @@
       if (isAdmin) {
         nameContainer.appendChild(createAdminTag());
       }
-      headerUserEmailSpan.textContent = currentUserProfile.username || currentUserProfile.email || "User";
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function linkify(text) {
+      const urlRegex = /((https?:\/\/|www\.)[^\s<]+)/gi;
+      return text.replace(urlRegex, (match) => {
+        let url = match;
+        if (!/^https?:\/\//i.test(url)) {
+          url = "https://" + url;
+        }
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${match}</a>`;
+      });
     }
 
     function renderMessage(msg, grouped, id) {
       const msgEl = document.createElement("div");
       msgEl.className = "message";
+      if (grouped) msgEl.classList.add("message-grouped");
 
       const displayName = msg.username || msg.userEmail || "Unknown";
 
       const senderProfile = msg.sender ? usersCache.get(msg.sender) : null;
-      const g1 = senderProfile?.grad1 || "#f97316";
-      const g2 = senderProfile?.grad2 || "#ec4899";
-      const g3 = senderProfile?.grad3 || "#6366f1";
+      const g1 = senderProfile?.grad1 || "#60a5fa";
+      const g2 = senderProfile?.grad2 || "#a855f7";
+      const g3 = senderProfile?.grad3 || "#f97373";
 
-      const isMentionForMe = currentUserProfile && msg.text && isMessageMentioningUser(msg.text, currentUserProfile);
+      const isMention = (() => {
+        if (!currentUserProfile || !msg.text) return false;
+        const uname = currentUserProfile.username || "";
+        if (!uname) return false;
+        const pattern = new RegExp(`@${uname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(\\b|$)`, "i");
+        return pattern.test(msg.text);
+      })();
 
       if (!grouped) {
         const avatarEl = document.createElement("div");
         avatarEl.className = "message-avatar";
         avatarEl.textContent = initialsFromName(displayName);
-        avatarEl.style.background = `radial-gradient(circle at top, ${g1}, ${g2}, ${g3})`;
+        avatarEl.style.background = `radial-gradient(circle at top, ${g1}, ${g2})`;
 
         const bodyEl = document.createElement("div");
         bodyEl.className = "message-body";
@@ -986,7 +1930,7 @@
           textEl.className = "reply-preview-text";
           const uname = rp.username || "Unknown";
           const snippet = rp.text || "";
-          textEl.innerHTML = `<strong>${uname}</strong> — ${snippet}`;
+          textEl.innerHTML = `<strong>${escapeHtml(uname)}</strong> — ${escapeHtml(snippet)}`;
 
           rpEl.appendChild(barEl);
           rpEl.appendChild(textEl);
@@ -1005,13 +1949,6 @@
 
         if (msg.userEmail === ADMIN_EMAIL) {
           usernameEl.appendChild(createAdminTag());
-        }
-
-        if (isMentionForMe) {
-          const badge = document.createElement("span");
-          badge.className = "mention-badge";
-          badge.textContent = "Mention";
-          usernameEl.appendChild(badge);
         }
 
         const tsEl = document.createElement("span");
@@ -1059,9 +1996,10 @@
 
         const textEl = document.createElement("div");
         textEl.className = "message-text";
-        textEl.textContent = msg.text || "";
+        const safe = escapeHtml(msg.text || "");
+        textEl.innerHTML = linkify(safe);
 
-        if (isMentionForMe) {
+        if (isMention) {
           msgEl.classList.add("mention-highlight");
         }
 
@@ -1071,8 +2009,6 @@
         msgEl.appendChild(avatarEl);
         msgEl.appendChild(bodyEl);
       } else {
-        msgEl.style.marginLeft = "38px";
-
         const bodyWrap = document.createElement("div");
         bodyWrap.style.display = "flex";
         bodyWrap.style.alignItems = "center";
@@ -1101,7 +2037,7 @@
           textEl.className = "reply-preview-text";
           const uname = rp.username || "Unknown";
           const snippet = rp.text || "";
-          textEl.innerHTML = `<strong>${uname}</strong> — ${snippet}`;
+          textEl.innerHTML = `<strong>${escapeHtml(uname)}</strong> — ${escapeHtml(snippet)}`;
 
           rpEl.appendChild(barEl);
           rpEl.appendChild(textEl);
@@ -1110,10 +2046,11 @@
 
         const textEl = document.createElement("div");
         textEl.className = "message-text";
-        textEl.textContent = msg.text || "";
+        const safe = escapeHtml(msg.text || "");
+        textEl.innerHTML = linkify(safe);
         textContainer.appendChild(textEl);
 
-        if (isMentionForMe) {
+        if (isMention) {
           msgEl.classList.add("mention-highlight");
         }
 
@@ -1165,16 +2102,13 @@
       }
 
       messagesEl.appendChild(msgEl);
-
-      // if this message mentions me and is not mine, ping
-      const user = auth.currentUser;
-      if (user && msg.userEmail !== user.email && isMentionForMe) {
-        triggerMentionPing(displayName, msg.text || "");
-      }
     }
 
     function subscribeToChannelMessages(channelId) {
       if (messagesUnsub) messagesUnsub();
+
+      lastSeenMessageTime = 0;
+      suppressMentionSound = true;
 
       const q = query(
         collection(db, "channels", channelId, "messages"),
@@ -1186,52 +2120,65 @@
 
         let lastUser = null;
         let lastTimestamp = 0;
+        let maxTimeSeen = lastSeenMessageTime;
 
         snapshot.forEach((docSnap) => {
           const msg = docSnap.data();
           const id = docSnap.id;
 
           const displayName = msg.username || msg.userEmail || "Unknown";
-          const thisUser = displayName;
 
           const thisTime = typeof msg.createdAtMs === "number"
             ? msg.createdAtMs
             : (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now());
 
-          const sameUser = thisUser === lastUser;
+          const sameUser = displayName === lastUser;
           const withinWindow = Math.abs(thisTime - lastTimestamp) < 3 * 60 * 1000;
 
           let grouped = sameUser && withinWindow;
-
-          if (msg.replyTo) {
-            grouped = false;
-          }
+          if (msg.replyTo) grouped = false;
 
           renderMessage(msg, grouped, id);
 
-          lastUser = thisUser;
+          const isOwn = auth.currentUser && msg.sender === auth.currentUser.uid;
+          const isMention = (() => {
+            if (!currentUserProfile || !msg.text) return false;
+            const uname = currentUserProfile.username || "";
+            if (!uname) return false;
+            const pattern = new RegExp(`@${uname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(\\b|$)`, "i");
+            return pattern.test(msg.text);
+          })();
+
+          if (!suppressMentionSound && !mentionMuted && !isOwn && isMention && thisTime > lastSeenMessageTime) {
+            try {
+              mentionSound.currentTime = 0;
+              mentionSound.play().catch(() => {});
+            } catch {}
+          }
+
+          if (thisTime > maxTimeSeen) {
+            maxTimeSeen = thisTime;
+          }
+
+          lastUser = displayName;
           lastTimestamp = thisTime;
         });
+
+        lastSeenMessageTime = maxTimeSeen;
+        suppressMentionSound = false;
 
         scrollMessagesToBottom();
       });
     }
 
-    // 1000-char cap + 2s cooldown + char UI
-    function updateCharCapUI() {
-      const len = messageInput.value.length;
-      charCapEl.textContent = `${len} / 1000`;
-      charCapEl.classList.remove("char-cap-warn", "char-cap-danger");
-      if (len >= 950) {
-        charCapEl.classList.add("char-cap-danger");
-      } else if (len >= 800) {
-        charCapEl.classList.add("char-cap-warn");
-      }
-    }
-
     async function sendChannelMessage() {
       const user = auth.currentUser;
       if (!user || !currentChannelId) return;
+
+      if (isTimedOut(currentUserProfile)) {
+        updateTimeoutUI();
+        return;
+      }
 
       const now = Date.now();
       if (now - lastMessageTime < 2000) {
@@ -1244,11 +2191,6 @@
 
       if (text.length > 1000) {
         alert("Messages are limited to 1000 characters.");
-        return;
-      }
-
-      if (isTimedOut(currentUserProfile)) {
-        alert("You are currently timed out and cannot send messages.");
         return;
       }
 
@@ -1278,46 +2220,81 @@
       try {
         await addDoc(collection(db, "channels", currentChannelId, "messages"), payload);
         messageInput.value = "";
+        updateCharCap();
         setActiveReply(null);
         lastMessageTime = Date.now();
-        updateCharCapUI();
-        resetMentionState();
+        updateTimeoutUI();
+        closeMentionDropdown();
       } catch (err) {
         console.error("Error sending channel message:", err);
       }
     }
 
     sendBtn.addEventListener("click", () => {
-      sendChannelMessage();
-    });
-
-    messageInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        if (mentionActive && (e.key === "Enter")) {
-          if (mentionCandidates.length > 0) {
-            applySelectedMention();
-            return;
-          }
-        }
+      if (!sendBtn.disabled) {
         sendChannelMessage();
-      } else if (mentionActive && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
-        e.preventDefault();
-        if (mentionCandidates.length === 0) return;
-        if (e.key === "ArrowDown") {
-          mentionSelectedIndex = (mentionSelectedIndex + 1) % mentionCandidates.length;
-        } else {
-          mentionSelectedIndex = (mentionSelectedIndex - 1 + mentionCandidates.length) % mentionCandidates.length;
-        }
-        renderMentionDropdown();
-      } else if (mentionActive && e.key === "Escape") {
-        resetMentionState();
       }
     });
 
+    messageInput.addEventListener("keydown", (e) => {
+      if (mentionState.open) {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          if (mentionState.items.length > 0) {
+            mentionState.activeIndex = (mentionState.activeIndex + 1) % mentionState.items.length;
+            renderMentionDropdown();
+          }
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          if (mentionState.items.length > 0) {
+            mentionState.activeIndex =
+              (mentionState.activeIndex - 1 + mentionState.items.length) % mentionState.items.length;
+            renderMentionDropdown();
+          }
+          return;
+        }
+        if (e.key === "Enter") {
+          const item = mentionState.items[mentionState.activeIndex];
+          if (item) {
+            e.preventDefault();
+            applyMentionSelection(item);
+            return;
+          }
+        }
+        if (e.key === "Escape") {
+          closeMentionDropdown();
+          return;
+        }
+      }
+
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        if (!sendBtn.disabled) {
+          sendChannelMessage();
+        }
+      }
+    });
+
+    function updateCharCap() {
+      const len = messageInput.value.length;
+      charCapEl.textContent = `${len} / 1000`;
+      if (len > 1000) {
+        charCapEl.style.color = "#fecaca";
+        charCapEl.style.borderColor = "#fecaca";
+      } else if (len > 900) {
+        charCapEl.style.color = "#facc15";
+        charCapEl.style.borderColor = "#facc15";
+      } else {
+        charCapEl.style.color = "";
+        charCapEl.style.borderColor = "";
+      }
+    }
+
     messageInput.addEventListener("input", () => {
-      updateCharCapUI();
-      handleMentionInput();
+      updateCharCap();
+      handleMentionDetection();
     });
 
     function stopPresence() {
@@ -1397,9 +2374,18 @@
     function openChannel(channelId) {
       currentChannelId = channelId;
 
-      channelNameEl.textContent = "universal";
-      channelSubtitleEl.textContent = "Global chat for everyone in RADIANT";
-      messageInput.placeholder = "Send a message to #universal";
+      if (channelId === "uni-general") {
+        channelNameEl.textContent = "universal";
+        channelSubtitleEl.textContent = "Global chat for everyone in RADIANT";
+      } else if (channelId === "image-links") {
+        channelNameEl.textContent = "image-links";
+        channelSubtitleEl.textContent = "Share image URLs, previews and references here";
+      } else {
+        channelNameEl.textContent = channelId;
+        channelSubtitleEl.textContent = "";
+      }
+
+      messageInput.placeholder = `Message #${channelNameEl.textContent}`;
 
       document.querySelectorAll(".channel-item").forEach(el => {
         el.classList.toggle("active", el.dataset.channelId === channelId);
@@ -1438,9 +2424,9 @@
               username: u.username || current.email,
               customStatus: u.customStatus || "",
               presence: effectivePresence,
-              grad1: u.grad1 || "#f97316",
-              grad2: u.grad2 || "#ec4899",
-              grad3: u.grad3 || "#6366f1",
+              grad1: u.grad1 || "#60a5fa",
+              grad2: u.grad2 || "#a855f7",
+              grad3: u.grad3 || "#f97373",
               timeoutUntil: u.timeoutUntil || null,
               hidden,
               presenceOverride: u.presenceOverride === true
@@ -1449,6 +2435,7 @@
             userAvatarInitials.textContent = initialsFromName(currentUserProfile.username);
             applyGradientVars(currentUserProfile.grad1, currentUserProfile.grad2, currentUserProfile.grad3);
             applyOwnPresence(effectivePresence);
+            updateTimeoutUI();
           }
 
           if (!hidden) {
@@ -1462,10 +2449,9 @@
             avatar.className = "userlist-avatar";
             avatar.textContent = initialsFromName(u.username || u.email || "U");
 
-            const g1 = u.grad1 || "#f97316";
-            const g2 = u.grad2 || "#ec4899";
-            const g3 = u.grad3 || "#6366f1";
-            avatar.style.background = `radial-gradient(circle at top, ${g1}, ${g2}, ${g3})`;
+            const g1 = u.grad1 || "#60a5fa";
+            const g2 = u.grad2 || "#a855f7";
+            avatar.style.background = `radial-gradient(circle at top, ${g1}, ${g2})`;
 
             const dot = document.createElement("div");
             dot.className = "userlist-status-dot";
@@ -1530,7 +2516,7 @@
       localStorage.setItem("theme", theme);
     });
 
-    const savedTheme = localStorage.getItem("theme") || "dark";
+    const savedTheme = localStorage.getItem("theme") || "cosy-dark";
     document.documentElement.setAttribute("data-theme", savedTheme);
     themeSelect.value = savedTheme;
 
@@ -1547,8 +2533,8 @@
         row.style.alignItems = "center";
         row.style.justifyContent = "space-between";
         row.style.gap = "6px";
-        row.style.padding = "4px 6px";
-        row.style.borderRadius = "8px";
+        row.style.padding = "5px 7px";
+        row.style.borderRadius = "999px";
 
         const left = document.createElement("div");
         left.style.display = "flex";
@@ -1589,13 +2575,24 @@
           const b = document.createElement("button");
           b.textContent = text;
           b.title = title;
-          b.style.border = "1px solid var(--border)";
+          b.style.border = "1px solid var(--border-soft)";
           b.style.borderRadius = "999px";
-          b.style.padding = "2px 6px";
+          b.style.padding = "2px 7px";
           b.style.fontSize = "11px";
           b.style.background = "var(--bg-body)";
           b.style.color = "var(--text-main)";
           b.style.cursor = "pointer";
+          b.style.transition = "background 0.12s ease, border-color 0.12s ease, transform 0.08s ease";
+          b.addEventListener("mouseover", () => {
+            b.style.background = "var(--bg-elevated)";
+            b.style.borderColor = "var(--border-strong)";
+            b.style.transform = "translateY(-1px)";
+          });
+          b.addEventListener("mouseout", () => {
+            b.style.background = "var(--bg-body)";
+            b.style.borderColor = "var(--border-soft)";
+            b.style.transform = "translateY(0)";
+          });
           b.addEventListener("click", handler);
           return b;
         }
@@ -1603,17 +2600,29 @@
         const timeout5 = makeBtn("5m", "Timeout 5 minutes", async () => {
           const until = Date.now() + 5 * 60 * 1000;
           await setDoc(doc(db, "users", uid), { timeoutUntil: until }, { merge: true });
+          if (auth.currentUser && auth.currentUser.uid === uid) {
+            currentUserProfile.timeoutUntil = until;
+            updateTimeoutUI();
+          }
         });
 
         const timeout60 = makeBtn("1h", "Timeout 1 hour", async () => {
           const until = Date.now() + 60 * 60 * 1000;
           await setDoc(doc(db, "users", uid), { timeoutUntil: until }, { merge: true });
+          if (auth.currentUser && auth.currentUser.uid === uid) {
+            currentUserProfile.timeoutUntil = until;
+            updateTimeoutUI();
+          }
         });
 
         const clearTimeoutBtn = makeBtn("Clear", "Clear timeout", async () => {
           await setDoc(doc(db, "users", uid), {
             timeoutUntil: deleteField()
           }, { merge: true });
+          if (auth.currentUser && auth.currentUser.uid === uid) {
+            currentUserProfile.timeoutUntil = null;
+            updateTimeoutUI();
+          }
         });
 
         const forceOnline = makeBtn("Online", "Force online", async () => {
@@ -1698,224 +2707,158 @@
       adminModal.classList.add("hidden");
     });
 
-    // mention helpers
-    function resetMentionState() {
-      mentionActive = false;
-      mentionQuery = "";
-      mentionCandidates = [];
-      mentionSelectedIndex = 0;
-      mentionTriggerIndex = -1;
-      mentionDropdown.classList.add("hidden");
-      mentionDropdown.innerHTML = "";
-    }
-
-    function handleMentionInput() {
+    function handleMentionDetection() {
       const value = messageInput.value;
-      const cursorPos = messageInput.selectionStart ?? value.length;
+      const cursor = messageInput.selectionStart;
 
-      if (!mentionActive) {
-        // look for a new '@' just typed
-        if (cursorPos > 0 && value[cursorPos - 1] === "@") {
-          mentionActive = true;
-          mentionTriggerIndex = cursorPos - 1;
-          mentionQuery = "";
-          buildMentionCandidates();
-          renderMentionDropdown();
-        } else {
-          resetMentionState();
-        }
+      const beforeCursor = value.slice(0, cursor);
+      const match = /(^|\s)@([^\s@]*)$/.exec(beforeCursor);
+      if (!match) {
+        closeMentionDropdown();
         return;
       }
 
-      // mention is active
-      if (cursorPos <= mentionTriggerIndex) {
-        resetMentionState();
-        return;
-      }
+      const filter = match[2] || "";
+      const triggerIndex = cursor - filter.length - 1;
 
-      const afterTrigger = value.slice(mentionTriggerIndex + 1, cursorPos);
-      if (/\s/.test(afterTrigger)) {
-        // space or newline ended mention
-        resetMentionState();
-        return;
-      }
-
-      mentionQuery = afterTrigger.toLowerCase();
-      buildMentionCandidates();
-      renderMentionDropdown();
-    }
-
-    function buildMentionCandidates() {
       const allUsers = [];
       usersCache.forEach((u, uid) => {
-        if (u.hidden) return;
+        if (u.hidden === true) return;
         allUsers.push({ uid, ...u });
       });
 
-      let filtered = allUsers;
-      if (mentionQuery) {
-        filtered = allUsers.filter(u => {
-          const name = (u.username || u.email || "").toLowerCase();
-          return name.includes(mentionQuery);
-        });
+      const filtered = allUsers
+        .filter(u => {
+          const uname = (u.username || "").toLowerCase();
+          const email = (u.email || "").toLowerCase();
+          const f = filter.toLowerCase();
+          return uname.includes(f) || email.includes(f);
+        })
+        .sort((a, b) => (a.username || a.email || "").localeCompare(b.username || b.email || ""));
+
+      if (filtered.length === 0) {
+        closeMentionDropdown();
+        return;
       }
 
-      // sort by presence then name
-      filtered.sort((a, b) => {
-        const pa = computeEffectivePresence(a);
-        const pb = computeEffectivePresence(b);
-        const order = { online: 0, away: 1, offline: 2 };
-        if (order[pa] !== order[pb]) return order[pa] - order[pb];
-        const na = (a.username || a.email || "").toLowerCase();
-        const nb = (b.username || b.email || "").toLowerCase();
-        return na.localeCompare(nb);
-      });
+      mentionState.open = true;
+      mentionState.filter = filter;
+      mentionState.items = filtered;
+      mentionState.activeIndex = 0;
+      mentionState.triggerIndex = triggerIndex;
 
-      mentionCandidates = filtered.slice(0, 20);
-      mentionSelectedIndex = 0;
+      renderMentionDropdown();
     }
 
     function renderMentionDropdown() {
-      if (!mentionActive || mentionCandidates.length === 0) {
+      if (!mentionState.open || mentionState.items.length === 0) {
         mentionDropdown.classList.add("hidden");
-        mentionDropdown.innerHTML = "";
         return;
       }
 
       mentionDropdown.innerHTML = "";
-      mentionDropdown.classList.remove("hidden");
-
-      mentionCandidates.forEach((u, idx) => {
+      mentionState.items.forEach((u, index) => {
         const item = document.createElement("div");
-        item.className = "mention-item" + (idx === mentionSelectedIndex ? " active" : "");
+        item.className = "mention-item";
+        if (index === mentionState.activeIndex) {
+          item.classList.add("active");
+        }
 
-        const nameSpan = document.createElement("span");
-        nameSpan.className = "mention-item-name";
-        nameSpan.textContent = u.username || u.email || "Unknown";
+        const avatar = document.createElement("div");
+        avatar.className = "mention-avatar";
+        avatar.textContent = initialsFromName(u.username || u.email || "U");
+        const g1 = u.grad1 || "#60a5fa";
+        const g2 = u.grad2 || "#a855f7";
+        avatar.style.background = `radial-gradient(circle at top, ${g1}, ${g2})`;
 
-        const statusSpan = document.createElement("span");
-        statusSpan.className = "mention-item-status";
-        statusSpan.textContent = presenceLabel(computeEffectivePresence(u));
+        const meta = document.createElement("div");
+        meta.className = "mention-meta";
 
-        item.appendChild(nameSpan);
-        item.appendChild(statusSpan);
+        const name = document.createElement("div");
+        name.className = "mention-name";
+        name.textContent = u.username || u.email || "Unknown";
+
+        const email = document.createElement("div");
+        email.className = "mention-email";
+        email.textContent = u.email || "";
+
+        meta.appendChild(name);
+        meta.appendChild(email);
+
+        item.appendChild(avatar);
+        item.appendChild(meta);
 
         item.addEventListener("mousedown", (e) => {
           e.preventDefault();
-          mentionSelectedIndex = idx;
-          applySelectedMention();
+          applyMentionSelection(u);
         });
 
         mentionDropdown.appendChild(item);
       });
+
+      mentionDropdown.classList.remove("hidden");
     }
 
-    function applySelectedMention() {
-      if (!mentionActive || mentionCandidates.length === 0) return;
-      const chosen = mentionCandidates[mentionSelectedIndex];
-      const name = chosen.username || chosen.email || "Unknown";
-
+    function applyMentionSelection(user) {
       const value = messageInput.value;
-      const cursorPos = messageInput.selectionStart ?? value.length;
+      const cursor = messageInput.selectionStart;
 
-      const before = value.slice(0, mentionTriggerIndex);
-      const after = value.slice(cursorPos);
+      if (mentionState.triggerIndex < 0 || mentionState.triggerIndex >= cursor) {
+        closeMentionDropdown();
+        return;
+      }
 
-      const insert = "@" + name + " ";
+      const before = value.slice(0, mentionState.triggerIndex);
+      const after = value.slice(cursor);
+      const username = user.username || user.email || "";
+      const insert = `@${username} `;
+
       const newValue = before + insert + after;
       const newCursor = before.length + insert.length;
 
       messageInput.value = newValue;
+      messageInput.focus();
       messageInput.setSelectionRange(newCursor, newCursor);
 
-      resetMentionState();
-      updateCharCapUI();
+      updateCharCap();
+      closeMentionDropdown();
     }
 
-    function isMessageMentioningUser(text, profile) {
-      if (!profile) return false;
-      const username = profile.username || "";
-      const email = profile.email || "";
-      const lower = text.toLowerCase();
-      const uname = username.toLowerCase();
-      const mail = email.toLowerCase();
-
-      // simple word-boundary-ish check
-      return (
-        (uname && lower.includes("@" + uname)) ||
-        (mail && lower.includes("@" + mail))
-      );
+    function closeMentionDropdown() {
+      mentionState.open = false;
+      mentionState.filter = "";
+      mentionState.items = [];
+      mentionState.activeIndex = 0;
+      mentionState.triggerIndex = -1;
+      mentionDropdown.classList.add("hidden");
     }
 
-    function triggerMentionPing(fromName, text) {
-      try {
-        mentionSound.currentTime = 0;
-        mentionSound.play().catch(() => {});
-      } catch {}
-
-      if ("Notification" in window) {
-        if (Notification.permission === "granted") {
-          new Notification(`Mention from ${fromName}`, {
-            body: text.slice(0, 120),
-          });
-        } else if (Notification.permission === "default") {
-          Notification.requestPermission().then((perm) => {
-            if (perm === "granted") {
-              new Notification(`Mention from ${fromName}`, {
-                body: text.slice(0, 120),
-              });
-            }
-          });
-        }
-      }
-    }
-
-    // changelog modal
-    function showChangelogIfNeeded() {
-      const key = "radiant_last_version_seen";
-      const lastSeen = localStorage.getItem(key);
-      if (lastSeen === APP_VERSION) return;
-
-      // fill body
-      changelogBody.innerHTML = "";
-      CHANGELOG_ENTRIES.forEach(entry => {
-        const wrap = document.createElement("div");
-        wrap.className = "changelog-entry";
-
-        const title = document.createElement("div");
-        title.className = "changelog-entry-title";
-        title.textContent = entry.title;
-
-        const body = document.createElement("div");
-        body.className = "changelog-entry-body";
-        body.textContent = entry.body;
-
-        wrap.appendChild(title);
-        wrap.appendChild(body);
-        changelogBody.appendChild(wrap);
-      });
-
+    // --- CHANGELOG LOGIC ---
+    function showChangelog() {
       changelogModal.classList.remove("hidden");
+
       let remaining = 5;
-      changelogClose.disabled = true;
-      changelogClose.textContent = `Got it (${remaining})`;
+      changelogCloseBtn.textContent = `Close (${remaining})`;
+      changelogCloseBtn.disabled = true;
 
       const interval = setInterval(() => {
-        remaining -= 1;
+        remaining--;
+        changelogCloseBtn.textContent = `Close (${remaining})`;
+
         if (remaining <= 0) {
           clearInterval(interval);
-          changelogClose.disabled = false;
-          changelogClose.textContent = "Got it";
-        } else {
-          changelogClose.textContent = `Got it (${remaining})`;
+          changelogCloseBtn.textContent = "Close";
+          changelogCloseBtn.disabled = false;
         }
       }, 1000);
+    }
 
-      changelogClose.onclick = () => {
-        if (changelogClose.disabled) return;
-        changelogModal.classList.add("hidden");
-        localStorage.setItem(key, APP_VERSION);
-      };
+    changelogCloseBtn.addEventListener("click", () => {
+      changelogModal.classList.add("hidden");
+    });
+
+    function triggerChangelogAfterLogin() {
+      setTimeout(showChangelog, 300);
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -1930,9 +2873,9 @@
           const username = profile?.username || user.email;
           const customStatus = profile?.customStatus || "";
           const effectivePresence = computeEffectivePresence(profile || {});
-          const grad1 = profile?.grad1 || "#f97316";
-          const grad2 = profile?.grad2 || "#ec4899";
-          const grad3 = profile?.grad3 || "#6366f1";
+          const grad1 = profile?.grad1 || "#60a5fa";
+          const grad2 = profile?.grad2 || "#a855f7";
+          const grad3 = profile?.grad3 || "#f97373";
           const timeoutUntil = profile?.timeoutUntil || null;
           const hidden = profile?.hidden === true;
           const presenceOverride = profile?.presenceOverride === true;
@@ -1957,6 +2900,7 @@
           userAvatarInitials.textContent = initialsFromName(currentUserProfile.username);
           applyOwnPresence(effectivePresence);
           applyGradientVars(grad1, grad2, grad3);
+          updateTimeoutUI();
 
           editUsernameInput.value = username;
           editStatusInput.value = customStatus;
@@ -1972,9 +2916,9 @@
             username: fallback,
             customStatus: "",
             presence: "online",
-            grad1: "#f97316",
-            grad2: "#ec4899",
-            grad3: "#6366f1",
+            grad1: "#60a5fa",
+            grad2: "#a855f7",
+            grad3: "#f97373",
             timeoutUntil: null,
             hidden: false,
             presenceOverride: false
@@ -1985,15 +2929,16 @@
           renderSidebarUserName();
           userAvatarInitials.textContent = initialsFromName(fallback);
           applyOwnPresence("online");
-          applyGradientVars("#f97316", "#ec4899", "#6366f1");
+          applyGradientVars("#60a5fa", "#a855f7", "#f97373");
+          updateTimeoutUI();
         }
 
         openChannel("uni-general");
         subscribeToUsers();
         startPresence(user.uid);
-        updateCharCapUI();
-        resetMentionState();
-        showChangelogIfNeeded();
+        updateCharCap();
+
+        triggerChangelogAfterLogin();
       } else {
         stopPresence();
         appView.classList.add("hidden");
@@ -2011,7 +2956,9 @@
         setActiveReply(null);
         isAdmin = false;
         adminBtn.classList.add("hidden");
-        resetMentionState();
+        currentUserProfile = null;
+        updateTimeoutUI();
+        closeMentionDropdown();
       }
     });
   </script>
