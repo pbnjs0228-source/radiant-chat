@@ -1311,7 +1311,7 @@
             </div>
             <div class="channel-item" data-channel-id="image-links">
               <span class="channel-hash">#</span>
-              <span>image-links</span>
+              <span>images</span>
             </div>
           </div>
         </div>
@@ -1467,23 +1467,9 @@
       <div style="display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:4px;">
 
         <div style="padding:10px;border-radius:14px;background:var(--bg-elevated);border:1px solid var(--border-soft);">
-          <div style="font-weight:600;font-size:14px;margin-bottom:4px;">✨ New UI</div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;">📸 Image Support!</div>
           <div style="font-size:13px;color:var(--text-muted);">
-            A fully revamped cosy, rounded interface with softer panels, improved readability, and a more Discord‑like layout.
-          </div>
-        </div>
-
-        <div style="padding:10px;border-radius:14px;background:var(--bg-elevated);border:1px solid var(--border-soft);">
-          <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🔔 Mention Pings & Sounds</div>
-          <div style="font-size:13px;color:var(--text-muted);">
-            Mentions now glow, highlight, and trigger a ping sound — with a toggle to mute them anytime.
-          </div>
-        </div>
-
-        <div style="padding:10px;border-radius:14px;background:var(--bg-elevated);border:1px solid var(--border-soft);">
-          <div style="font-weight:600;font-size:14px;margin-bottom:4px;">📁 Another Channel</div>
-          <div style="font-size:13px;color:var(--text-muted);">
-            A new <strong>#image-links</strong> channel has been added for sharing image URLs and references.
+            You can now import and paste images! Send them in #images.
           </div>
         </div>
 
@@ -1613,6 +1599,41 @@
 
     // pendingImage: { dataUrl, name, type, size }
     let pendingImage = null;
+    // --- IMAGE PASTE SUPPORT ---
+messageInput.addEventListener("paste", (e) => {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+
+  for (const item of items) {
+    if (item.type.startsWith("image/")) {
+      const file = item.getAsFile();
+      if (!file) continue;
+
+      // Optional: size limit (same as upload)
+      const maxBytes = 8 * 1024 * 1024; // 8MB
+      if (file.size > maxBytes) {
+        alert("Pasted image is too large. Max 8MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        pendingImage = {
+          dataUrl: reader.result,
+          name: file.name || "pasted-image.png",
+          type: file.type,
+          size: file.size
+        };
+        updateImageAttachUI();
+      };
+      reader.readAsDataURL(file);
+
+      // Prevent the raw image blob from being inserted as text
+      e.preventDefault();
+      break;
+    }
+  }
+});
 
     function updateImageAttachUI() {
       if (!imageAttachPill) return;
