@@ -270,15 +270,9 @@
       background: #4b5563;
     }
 
-    .status-online {
-      background: #22c55e !important;
-    }
-    .status-away {
-      background: #facc15 !important;
-    }
-    .status-offline {
-      background: #4b5563 !important;
-    }
+    .status-online { background: #22c55e !important; }
+    .status-away { background: #facc15 !important; }
+    .status-offline { background: #4b5563 !important; }
 
     .user-pill-text {
       display: flex;
@@ -764,6 +758,37 @@
       position: relative;
     }
 
+    /* NEW: image upload button (Discord-style, left of textarea) */
+    .input-left-tools {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 6px;
+    }
+
+    .image-upload-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: var(--bg-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 16px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.9);
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease, color 0.12s ease;
+    }
+
+    .image-upload-btn:hover {
+      background: var(--bg-sidebar);
+      border-color: var(--border-strong);
+      color: #bfdbfe;
+      transform: translateY(-1px);
+    }
+
     .input-wrapper {
       flex: 1;
       background: var(--bg-input);
@@ -789,6 +814,45 @@
 
     .input-wrapper textarea::placeholder {
       color: var(--text-muted);
+    }
+
+    /* NEW: image preview strip under input */
+    .image-preview-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+      padding: 4px 2px 0;
+    }
+
+    .image-preview-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--bg-elevated);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .image-preview-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: #020617;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .image-preview-remove {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0;
     }
 
     .send-btn {
@@ -1283,6 +1347,19 @@
           </div>
 
           <div class="input-row">
+            <!-- NEW: image upload button + hidden file input -->
+            <div class="input-left-tools">
+              <button id="image-upload-btn" type="button" class="image-upload-btn" title="Upload image">
+                +
+              </button>
+              <input
+                id="image-file-input"
+                type="file"
+                accept=".png,.jpg,.jpeg,.gif,.webp,.bmp,.tif,.tiff,.jfif,.pjp,.apng,.xbm"
+                class="hidden"
+              />
+            </div>
+
             <div class="input-wrapper">
               <textarea id="message-input" rows="1" placeholder="Message #universal"></textarea>
               <div id="mention-dropdown" class="mention-dropdown hidden"></div>
@@ -1291,6 +1368,9 @@
               <span>Send</span>
             </button>
           </div>
+
+          <!-- NEW: image preview strip (chips for selected images) -->
+          <div id="image-preview-strip" class="image-preview-strip hidden"></div>
 
           <div class="char-cap-row">
             <span id="char-cap" class="char-cap-value">0 / 1000</span>
@@ -1421,7 +1501,6 @@
   <audio id="mention-sound">
     <source src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" type="audio/ogg">
   </audio>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
     import {
@@ -1525,6 +1604,73 @@
 
     const changelogModal = document.getElementById("changelog-modal");
     const changelogCloseBtn = document.getElementById("changelog-close-btn");
+
+    // --- IMAGE UPLOAD HOOKS (chunk 2 addition) ---
+    const imageUploadBtn = document.getElementById("image-upload-btn");
+    const imageFileInput = document.getElementById("image-file-input");
+    const imageAttachPill = document.getElementById("image-attach-pill");
+    const imageAttachClear = document.getElementById("image-attach-clear");
+
+    // pendingImage: { dataUrl, name, type, size }
+    let pendingImage = null;
+
+    function updateImageAttachUI() {
+      if (!imageAttachPill) return;
+      if (!pendingImage) {
+        imageAttachPill.classList.add("hidden");
+        return;
+      }
+      const label = imageAttachPill.querySelector(".image-attach-label");
+      if (label) {
+        const prettySize = pendingImage.size
+          ? `${Math.round(pendingImage.size / 1024)} KB`
+          : "";
+        label.textContent = `${pendingImage.name || "image"}${prettySize ? ` • ${prettySize}` : ""}`;
+      }
+      imageAttachPill.classList.remove("hidden");
+    }
+
+    if (imageUploadBtn && imageFileInput) {
+      imageUploadBtn.addEventListener("click", () => {
+        imageFileInput.click();
+      });
+
+      imageFileInput.addEventListener("change", () => {
+        const file = imageFileInput.files && imageFileInput.files[0];
+        if (!file) return;
+
+        // Simple guardrail: limit to ~1.5MB to keep Base64 manageable
+        const maxBytes = 12 * 1024 * 1024; // 12MB 
+        if (file.size > maxBytes) {
+          alert("Image is too large. Please choose one under ~1.5MB.");
+          imageFileInput.value = "";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result;
+          if (typeof result === "string") {
+            pendingImage = {
+              dataUrl: result, // full data URL (Base64)
+              name: file.name,
+              type: file.type,
+              size: file.size
+            };
+            updateImageAttachUI();
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if (imageAttachClear) {
+      imageAttachClear.addEventListener("click", () => {
+        pendingImage = null;
+        if (imageFileInput) imageFileInput.value = "";
+        updateImageAttachUI();
+      });
+    }
 
     let currentUserProfile = null;
     let currentChannelId = "uni-general";
@@ -1697,7 +1843,6 @@
         const until = currentUserProfile.timeoutUntil;
         const ms = typeof until === "number" ? until : until.toMillis();
         const remaining = ms - Date.now();
-
         if (remaining <= 0) {
           timeoutRow.classList.add("hidden");
           sendBtn.classList.remove("disabled");
@@ -1904,6 +2049,27 @@
         return pattern.test(msg.text);
       })();
 
+      const hasImage = !!msg.imageData;
+
+      function buildImageElement() {
+        if (!hasImage) return null;
+        const wrap = document.createElement("div");
+        wrap.className = "message-image-wrap";
+        wrap.style.marginTop = msg.text ? "6px" : "0";
+        const img = document.createElement("img");
+        img.className = "message-image";
+        img.src = msg.imageData;
+        img.alt = msg.imageName || "image";
+        img.style.maxWidth = "260px";
+        img.style.maxHeight = "220px";
+        img.style.borderRadius = "14px";
+        img.style.display = "block";
+        img.style.border = "1px solid rgba(15,23,42,0.9)";
+        img.style.boxShadow = "0 14px 32px rgba(15,23,42,0.95)";
+        wrap.appendChild(img);
+        return wrap;
+      }
+
       if (!grouped) {
         const avatarEl = document.createElement("div");
         avatarEl.className = "message-avatar";
@@ -1996,6 +2162,7 @@
 
         const textEl = document.createElement("div");
         textEl.className = "message-text";
+
         const safe = escapeHtml(msg.text || "");
         textEl.innerHTML = linkify(safe);
 
@@ -2004,7 +2171,15 @@
         }
 
         bodyEl.appendChild(headerEl);
-        bodyEl.appendChild(textEl);
+
+        // If there is text or image, show bubble; if no text but image, keep bubble for image
+        if (msg.text || hasImage) {
+          bodyEl.appendChild(textEl);
+          const imgEl = buildImageElement();
+          if (imgEl) {
+            textEl.appendChild(imgEl);
+          }
+        }
 
         msgEl.appendChild(avatarEl);
         msgEl.appendChild(bodyEl);
@@ -2048,10 +2223,17 @@
         textEl.className = "message-text";
         const safe = escapeHtml(msg.text || "");
         textEl.innerHTML = linkify(safe);
-        textContainer.appendChild(textEl);
 
         if (isMention) {
           msgEl.classList.add("mention-highlight");
+        }
+
+        if (msg.text || hasImage) {
+          textContainer.appendChild(textEl);
+          const imgEl = buildImageElement();
+          if (imgEl) {
+            textEl.appendChild(imgEl);
+          }
         }
 
         const controls = document.createElement("div");
@@ -2187,7 +2369,9 @@
       }
 
       const text = messageInput.value.trim();
-      if (!text) return;
+
+      // Allow messages that are either text, image, or both
+      if (!text && !pendingImage) return;
 
       if (text.length > 1000) {
         alert("Messages are limited to 1000 characters.");
@@ -2205,6 +2389,13 @@
         createdAt: serverTimestamp(),
         createdAtMs: nowMs
       };
+
+      if (pendingImage) {
+        payload.imageData = pendingImage.dataUrl;
+        payload.imageName = pendingImage.name || null;
+        payload.imageType = pendingImage.type || null;
+        payload.imageSize = pendingImage.size || null;
+      }
 
       if (activeReply) {
         payload.replyTo = activeReply.messageId;
@@ -2225,6 +2416,11 @@
         lastMessageTime = Date.now();
         updateTimeoutUI();
         closeMentionDropdown();
+
+        // Clear pending image after successful send
+        pendingImage = null;
+        if (imageFileInput) imageFileInput.value = "";
+        updateImageAttachUI();
       } catch (err) {
         console.error("Error sending channel message:", err);
       }
@@ -2959,6 +3155,9 @@
         currentUserProfile = null;
         updateTimeoutUI();
         closeMentionDropdown();
+        pendingImage = null;
+        if (imageFileInput) imageFileInput.value = "";
+        updateImageAttachUI();
       }
     });
   </script>
