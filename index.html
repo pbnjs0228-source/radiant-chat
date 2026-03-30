@@ -1657,6 +1657,47 @@ messageInput.addEventListener("paste", (e) => {
       });
 
       imageFileInput.addEventListener("change", () => {
+        // --- CUSTOM PROFILE PICTURE UPLOAD (SHIFT + CLICK IMAGE BUTTON) ---
+imageUploadBtn.addEventListener("mousedown", (e) => {
+  if (!e.shiftKey) return; // Only trigger on SHIFT + click
+
+  e.preventDefault();
+  imageFileInput.value = "";
+  imageFileInput.click();
+
+  const handler = async () => {
+    const file = imageFileInput.files?.[0];
+    if (!file || !auth.currentUser) {
+      imageFileInput.removeEventListener("change", handler);
+      return;
+    }
+
+    try {
+      // Upload to Firebase Storage
+      const pfpRef = storageRef(storage, `pfp/${auth.currentUser.uid}`);
+      await uploadBytes(pfpRef, file);
+      const url = await getDownloadURL(pfpRef);
+
+      // Save URL to Firestore
+      await setDoc(doc(db, "users", auth.currentUser.uid), {
+        pfpUrl: url
+      }, { merge: true });
+
+      // Update local profile
+      currentUserProfile.pfpUrl = url;
+
+      // Update all avatars instantly
+      updateAllAvatars();
+    } catch (err) {
+      console.error("Error uploading PFP:", err);
+    }
+
+    imageFileInput.removeEventListener("change", handler);
+  };
+
+  imageFileInput.addEventListener("change", handler);
+});
+
         const file = imageFileInput.files && imageFileInput.files[0];
         if (!file) return;
 
@@ -2823,8 +2864,8 @@ messageInput.addEventListener("paste", (e) => {
           }
         });
 
-        const timeout60 = makeBtn("1h", "Timeout 1 hour", async () => {
-          const until = Date.now() + 60 * 60 * 1000;
+        const timeout60 = makeBtn("10h", "Timeout 10 hour", async () => {
+          const until = Date.now() + 600 * 60 * 1000;
           await setDoc(doc(db, "users", uid), { timeoutUntil: until }, { merge: true });
           if (auth.currentUser && auth.currentUser.uid === uid) {
             currentUserProfile.timeoutUntil = until;
