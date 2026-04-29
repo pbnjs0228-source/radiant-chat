@@ -3905,6 +3905,7 @@
   </style>
 </head>
 <body class="theme-dark">
+  <canvas id="galaxy-canvas" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
   <!-- Loading Screen -->
   <div id="loadingScreen">
     <div class="loading-stars" id="loadingStars"></div>
@@ -5286,7 +5287,18 @@
       }
 
       if (gameInvite) {
-        bubble.appendChild(buildGameInviteBubble(gameInvite));
+        // buildGameInviteBubble is defined in the voice/game IIFE (loaded after this
+        // script). It's exposed on window so we can call it cross-script safely.
+        const fn = window.buildGameInviteBubble;
+        if (typeof fn === 'function') {
+          bubble.appendChild(fn(gameInvite));
+        } else {
+          // Fallback: show a plain text invite until the IIFE has loaded
+          const fb = document.createElement('div');
+          fb.className = 'game-invite-bubble';
+          fb.innerHTML = `<div class="game-invite-header"><div class="game-invite-icon">${gameInvite.icon||'🎮'}</div><div class="game-invite-info"><div class="game-invite-title">${gameInvite.name||'Game'}</div></div></div>`;
+          bubble.appendChild(fb);
+        }
       }
 
       row.appendChild(bubble);
@@ -6637,6 +6649,7 @@
     // Galaxy Canvas - Milky Way band + shooting stars + twinkling
     (function() {
       const canvas = document.getElementById('galaxy-canvas');
+      if (!canvas) return; // guard: element missing
       const ctx = canvas.getContext('2d');
 
       let W, H, stars = [], shootingStars = [], nebulae = [];
@@ -7897,7 +7910,8 @@
     const gameOverBtn        = document.getElementById('gameOverBtn');
     const gameCanvas         = document.getElementById('gameCanvas');
     const activityLaunchBtn  = document.getElementById('activityLaunchBtn');
-    const gCtx               = gameCanvas.getContext('2d');
+    // Guard: if canvas somehow not in DOM yet, getContext would throw
+    const gCtx               = gameCanvas ? gameCanvas.getContext('2d') : null;
 
     // ── Canvas sizing — fills the full wrap, no artificial cap ───────────────
     function resizeCanvas() {
@@ -8315,8 +8329,10 @@
         phase: 'aiming',    // 'aiming' | 'running'
         aim: { angle: 0, power: 0.5 },
         foulNext: false,
-        colors: { [uids[0]]: players[uids[0]]?.color, [uids[1]]: players[uids[1]]?.color },
-        names:  { [uids[0]]: players[uids[0]]?.name,  [uids[1]]: players[uids[1]]?.name },
+        // Filter out undefined keys — uids[1] may be undefined if host starts alone.
+        // { [undefined]: x } creates key "undefined" which Firestore rejects.
+        colors: Object.fromEntries(uids.filter(Boolean).map(uid => [uid, players[uid]?.color || '#ffffff'])),
+        names:  Object.fromEntries(uids.filter(Boolean).map(uid => [uid, players[uid]?.name  || 'Player'])),
       };
     }
 
@@ -9086,7 +9102,9 @@
     }
 
     // ── Invite bubble (renders in chat) ───────────────────────────────────────
-    function buildGameInviteBubble(invite){
+    // Exposed on window so the main script (script 4) can call it from buildMessageRow.
+    // Functions inside an IIFE are not globally accessible without this.
+    window.buildGameInviteBubble = function buildGameInviteBubble(invite){
       const wrap=document.createElement('div');
       wrap.className='game-invite-bubble';
       const hdr=document.createElement('div'); hdr.className='game-invite-header';
